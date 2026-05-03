@@ -1,3 +1,4 @@
+import "server-only";
 const databaseUrlValidator = (envVal: string) => {
   const value = typeof envVal === "string" ? envVal.trim() : undefined;
   if (!value) {
@@ -16,18 +17,38 @@ const databaseUrlValidator = (envVal: string) => {
   return value;
 };
 
-const resendKeyValidator = (envVal: string) => {
+const validateStringRequired = (envVal: string, key: string) => {
   const value = typeof envVal === "string" ? envVal.trim() : undefined;
 
   if (!value) {
-    throw new Error("RESEND_KEY is required");
+    throw new Error(`${key} is required`);
   }
   return value;
 };
 
+const validateURL = (envVal: string, key: string) => {
+  const value = typeof envVal === "string" ? envVal.trim() : undefined;
+
+  if (!value) {
+    throw new Error(`${key} is required`);
+  }
+
+  try {
+    const url = new URL(envVal);
+    return value;
+  } catch (e) {
+    throw new Error(
+      `${key} is not a valid URL. Reason: ${(e as Error).message}`,
+    );
+  }
+};
+
 const validators: Record<string, (value: string, key: string) => string> = {
   DATABASE_URL: databaseUrlValidator,
-  RESEND_KEY: resendKeyValidator,
+  RESEND_KEY: validateStringRequired,
+  DATABASE_PASSWORD: validateStringRequired,
+  NEXT_PUBLIC_SUPABASE_URL: validateURL,
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: validateStringRequired,
 };
 
 export const getValidatorsAndEnvDiff = (keys: string[]) => {
@@ -77,6 +98,9 @@ export const getEnvValidated = (key: string): string | undefined => {
   );
 };
 
-export const env = {
+export const serverEnv = {
   databaseUrl: getEnv("DATABASE_URL", ""),
+  supabaseUrl: getEnv("NEXT_PUBLIC_SUPABASE_URL", ""),
+  supabaseKey: getEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", ""),
+  resendKey: getEnv("RESEND_KEY", ""),
 };

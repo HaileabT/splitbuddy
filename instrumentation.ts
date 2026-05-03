@@ -1,6 +1,5 @@
 import { configDotenv } from "dotenv";
 import { getEnvValidated, getValidatorsAndEnvDiff } from "./lib/server/env";
-import { watch } from "node:fs";
 
 const envVars = configDotenv();
 
@@ -37,7 +36,9 @@ function validateEnv() {
   }
 
   if (failed.length > 0) {
-    process.exit(1);
+    throw new Error(
+      `[instrumentation] validation failed: ${failed.join(", ")}`,
+    );
   }
 
   const { hasValidatorButNotSet, hasNoValidatorButSet } =
@@ -55,10 +56,5 @@ function validateEnv() {
 
   console.log("\n", "#".repeat(50), "\n");
 }
-
-watch(".env", () => {
-  console.log("[instrumentation] .env file changed, re-validating...");
-  validateEnv();
-});
 
 validateEnv();
