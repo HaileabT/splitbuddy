@@ -43,10 +43,23 @@ const validateURL = (envVal: string, key: string) => {
   }
 };
 
+const getEnumValidator = (possibleVals: string[]) => {
+  return function (envVal: string, key: string) {
+    const value = typeof envVal === "string" ? envVal.trim() : undefined;
+
+    if (!value) {
+      throw new Error(`${key} is required`);
+    }
+    if (!possibleVals.includes(envVal)) {
+      throw new Error(`${envVal} value to ${key} invalid. Value can only be ${possibleVals.join(", ")}`)
+    }
+    return value;
+  }
+}
+
 const validators: Record<string, (value: string, key: string) => string> = {
   DATABASE_URL: databaseUrlValidator,
   RESEND_KEY: validateStringRequired,
-  DATABASE_PASSWORD: validateStringRequired,
   NEXT_PUBLIC_SUPABASE_URL: validateURL,
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: validateStringRequired,
 };

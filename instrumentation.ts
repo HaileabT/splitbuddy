@@ -1,7 +1,10 @@
 import { configDotenv } from "dotenv";
 import { getEnvValidated, getValidatorsAndEnvDiff } from "./lib/server/env";
 
-const envVars = configDotenv();
+const envVars = configDotenv({
+  path: process.env.NODE_ENV === "production" ? ".env.prod" : ".env.dev",
+  quiet: false
+});
 
 function validateEnv() {
   const success = [];
