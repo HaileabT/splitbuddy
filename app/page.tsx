@@ -1,63 +1,139 @@
-import Image from "next/image";
+"use client";
+import AppButton from "@/components/app-button";
+import { AppDialog } from "@/components/app-dialog";
+import { RecordForm } from "@/components/record-form";
+import { formatDate } from "@/lib/utils/dates";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 
 export default function Home() {
+  const [createTxOpen, setCreateTxOpen] = useState(false);
+  const [txDetailsOpen, setTxDetailsOpen] = useState(false);
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="flex flex-col items-center justify-center bg-background font-sans h-full">
+      <AppDialog
+        open={createTxOpen}
+        onOpenChange={setCreateTxOpen}
+        className="z-10"
+        title="Create A Record"
+        subtitle=" "
+      >
+        <RecordForm />
+      </AppDialog>
+      <AppDialog
+        open={txDetailsOpen}
+        onOpenChange={setTxDetailsOpen}
+        title={
+          <h3 className="text-success font-extrabold text-2xl">+300 Birr</h3>
+        }
+        subtitle="Today"
+        className="z-10"
+      >
+        <div className="flex flex-col gap-2">
+          <p className="text-foreground/50 flex justify-between border-b-[1px] border-dashed border-foreground/30">
+            <span>Reason</span>
+            <span className="text-foreground/80 max-w-[50%] text-right font-mono!">
+              Meal payment split daskf sldkjfewoijfsld f slkfjdf
+            </span>
+          </p>
+          <p className="text-foreground/50 flex justify-between border-b-[1px] border-dashed border-foreground/30">
+            <span>Cumulative up to this</span>{" "}
+            <span className="text-success font-mono">+480 Birr</span>
+          </p>
+
+          <p className="text-foreground/50 flex justify-between border-b-[1px] border-dashed border-foreground/30">
+            <span>Created At</span>
+            <span className="text-foreground/80 font-mono">
+              {formatDate(new Date())}
+            </span>
+          </p>
+          <p className="text-foreground/50 flex justify-between border-b-[1px] border-dashed border-foreground/30">
+            <span>Added By</span>
+            <span className="text-secondary font-mono">Abebe K.</span>
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </AppDialog>
+      <main className="flex flex-1 w-full min-h-full flex-col items-center py-8 px-16 gap-4 bg-background sm:items-start">
+        <div className="w-full h-76 bg-primary-gradient rounded-4xl p-10 flex flex-col justify-end">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-lg text-background">Haileab Tesfaye</h1>
+            <p className="text-background font-extrabold text-4xl">
+              +216.00 ETB
+            </p>
+            <p className="text-card text-xs font-light">
+              {formatDate(new Date())}
+            </p>
+          </div>
+        </div>
+        <div className="border-[1px] border-foreground/15 h-full! bg-card w-full rounded-4xl p-4 flex flex-col gap-4 overflow-y-auto">
+          {new Array(16).fill(0).map((_, i) => (
+            <AppDialog
+              key={i}
+              title="with Abebe Kebede"
+              subtitle={
+                <p>
+                  He owes you{" "}
+                  <span className="text-success font-bold">185 Birr</span>
+                </p>
+              }
+              headerActions={
+                <AppButton
+                  onClick={() => {
+                    setCreateTxOpen(true);
+                  }}
+                >
+                  <Plus />
+                </AppButton>
+              }
+              trigger={
+                <div className="w-full bg-background h-max p-4 flex justify-between items-center rounded-2xl cursor-pointer border-[1px] border-foreground/10">
+                  <div>
+                    <h2 className="font-bold">Abebe Kebede</h2>
+                    <p className="font-mono text-foreground/70">
+                      +210 Birr loan. 27th Mar, 2026
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-primary">+185.00 Birr</span>
+                  </div>
+                </div>
+              }
+            >
+              <div className="h-full relative">
+                <h2 className="mb-1 underline sticky">Recent Records</h2>
+                <div className="flex flex-col gap-4">
+                  <div
+                    className="bg-card w-full p-3 rounded-lg flex justify-between border-[1px] border-foreground/10 items-center cursor-pointer"
+                    onClick={() => setTxDetailsOpen(true)}
+                  >
+                    <h3 className="text-success font-extrabold text-2xl">
+                      +300 Birr
+                    </h3>
+                    <div>
+                      <p>by Abebe K.</p>
+                      <p className="text-end text-xs text-foreground/50">
+                        today
+                      </p>
+                    </div>
+                  </div>
+
+                  {new Array(19).fill(0).map((_, i) => (
+                    <div className="bg-card w-full p-3 rounded-lg flex justify-between border-[1px] border-foreground/10 items-center cursor-pointer">
+                      <h3 className="text-error font-extrabold text-2xl">
+                        -200 Birr
+                      </h3>
+                      <div>
+                        <p>by you</p>
+                        <p className="text-end text-xs text-foreground/50">
+                          yesterday
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </AppDialog>
+          ))}
         </div>
       </main>
     </div>
