@@ -1,7 +1,22 @@
 "use client";
-import AppButton from "@/components/app-button";
-import { AppDialog } from "@/components/app-dialog";
+
 import { RecordForm } from "@/components/record-form";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { formatDate } from "@/lib/utils/dates";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -9,131 +24,166 @@ import { useState } from "react";
 export default function Home() {
   const [createTxOpen, setCreateTxOpen] = useState(false);
   const [txDetailsOpen, setTxDetailsOpen] = useState(false);
-  return (
-    <div className="flex flex-col items-center justify-center bg-background font-sans h-full">
-      <AppDialog
-        open={createTxOpen}
-        onOpenChange={setCreateTxOpen}
-        className="z-10"
-        title="Create A Record"
-        subtitle=" "
-      >
-        <RecordForm />
-      </AppDialog>
-      <AppDialog
-        open={txDetailsOpen}
-        onOpenChange={setTxDetailsOpen}
-        title={
-          <h3 className="text-success font-extrabold text-2xl">+300 Birr</h3>
-        }
-        subtitle="Today"
-        className="z-10"
-      >
-        <div className="flex flex-col gap-2">
-          <p className="text-foreground/50 flex justify-between border-b-[1px] border-dashed border-foreground/30">
-            <span>Reason</span>
-            <span className="text-foreground/80 max-w-[50%] text-right font-mono!">
-              Meal payment split daskf sldkjfewoijfsld f slkfjdf
-            </span>
-          </p>
-          <p className="text-foreground/50 flex justify-between border-b-[1px] border-dashed border-foreground/30">
-            <span>Cumulative up to this</span>{" "}
-            <span className="text-success font-mono">+480 Birr</span>
-          </p>
+  const [loanBookOpen, setLoanBookOpen] = useState(false);
 
-          <p className="text-foreground/50 flex justify-between border-b-[1px] border-dashed border-foreground/30">
-            <span>Created At</span>
-            <span className="text-foreground/80 font-mono">
-              {formatDate(new Date())}
-            </span>
-          </p>
-          <p className="text-foreground/50 flex justify-between border-b-[1px] border-dashed border-foreground/30">
-            <span>Added By</span>
-            <span className="text-secondary font-mono">Abebe K.</span>
-          </p>
-        </div>
-      </AppDialog>
-      <main className="flex flex-1 w-full min-h-full flex-col items-center py-8 px-16 gap-4 bg-background sm:items-start">
-        <div className="w-full h-76 bg-primary-gradient rounded-4xl p-10 flex flex-col justify-end">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-lg text-background">Haileab Tesfaye</h1>
-            <p className="text-background font-extrabold text-4xl">
-              +216.00 ETB
-            </p>
-            <p className="text-card text-xs font-light">
-              {formatDate(new Date())}
-            </p>
+  return (
+    <div className="flex h-full flex-col w-full items-center justify-center bg-background font-sans">
+      <Dialog open={createTxOpen} onOpenChange={setCreateTxOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="z-100 max-w-xl gap-4 rounded-4xl border border-border bg-card p-6 sm:max-w-xl"
+        >
+          <DialogHeader className="border-b border-border/10 pb-4">
+            <DialogTitle className="text-lg font-bold">
+              Create A Record
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              Create a new record
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-4">
+            <RecordForm />
           </div>
-        </div>
-        <div className="border-[1px] border-foreground/15 h-full! bg-card w-full rounded-4xl p-4 flex flex-col gap-4 overflow-y-auto">
-          {new Array(16).fill(0).map((_, i) => (
-            <AppDialog
-              key={i}
-              title="with Abebe Kebede"
-              subtitle={
-                <p>
-                  He owes you{" "}
-                  <span className="text-success font-bold">185 Birr</span>
-                </p>
-              }
-              headerActions={
-                <AppButton
-                  onClick={() => {
-                    setCreateTxOpen(true);
-                  }}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={loanBookOpen} onOpenChange={setLoanBookOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="max-w-xl gap-4 rounded-4xl border border-border/10 bg-card p-6 sm:max-w-xl"
+        >
+          <DialogHeader className="flex-row items-start justify-between border-b border-border/10 pb-4">
+            <div>
+              <DialogTitle className="text-lg font-bold">
+                with Abebe Kebede
+              </DialogTitle>
+              <DialogDescription>
+                He owes you{" "}
+                <span className="font-bold text-success">185 Birr</span>
+              </DialogDescription>
+            </div>
+            <Button size="icon" onClick={() => setCreateTxOpen(true)}>
+              <Plus />
+            </Button>
+          </DialogHeader>
+          <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-4">
+            <h2 className="mb-1 underline">Recent Records</h2>
+            <div className="flex flex-col gap-4">
+              <Card
+                className="w-full cursor-pointer rounded-lg border border-border/10 ring-0"
+                onClick={() => setTxDetailsOpen(true)}
+              >
+                <CardContent className="flex items-center justify-between p-3">
+                  <h3 className="text-2xl font-extrabold text-success">
+                    +300 Birr
+                  </h3>
+                  <div>
+                    <p>by Abebe K.</p>
+                    <p className="text-end text-xs text-foreground/50">today</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {new Array(19).fill(0).map((_, j) => (
+                <Card
+                  key={j}
+                  className="w-full cursor-pointer rounded-lg border border-border/10 ring-0"
                 >
-                  <Plus />
-                </AppButton>
-              }
-              trigger={
-                <div className="w-full bg-background h-max p-4 flex justify-between items-center rounded-2xl cursor-pointer border-[1px] border-foreground/10">
-                  <div>
-                    <h2 className="font-bold">Abebe Kebede</h2>
-                    <p className="font-mono text-foreground/70">
-                      +210 Birr loan. 27th Mar, 2026
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-primary">+185.00 Birr</span>
-                  </div>
-                </div>
-              }
-            >
-              <div className="h-full relative">
-                <h2 className="mb-1 underline sticky">Recent Records</h2>
-                <div className="flex flex-col gap-4">
-                  <div
-                    className="bg-card w-full p-3 rounded-lg flex justify-between border-[1px] border-foreground/10 items-center cursor-pointer"
-                    onClick={() => setTxDetailsOpen(true)}
-                  >
-                    <h3 className="text-success font-extrabold text-2xl">
-                      +300 Birr
+                  <CardContent className="flex items-center justify-between p-3">
+                    <h3 className="text-2xl font-extrabold text-error">
+                      -200 Birr
                     </h3>
                     <div>
-                      <p>by Abebe K.</p>
+                      <p>by you</p>
                       <p className="text-end text-xs text-foreground/50">
-                        today
+                        yesterday
                       </p>
                     </div>
-                  </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-                  {new Array(19).fill(0).map((_, i) => (
-                    <div className="bg-card w-full p-3 rounded-lg flex justify-between border-[1px] border-foreground/10 items-center cursor-pointer">
-                      <h3 className="text-error font-extrabold text-2xl">
-                        -200 Birr
-                      </h3>
-                      <div>
-                        <p>by you</p>
-                        <p className="text-end text-xs text-foreground/50">
-                          yesterday
-                        </p>
-                      </div>
+      <Dialog open={txDetailsOpen} onOpenChange={setTxDetailsOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="z-100 max-w-xl gap-4 rounded-4xl border border-border/10 bg-card p-6 sm:max-w-xl"
+        >
+          <DialogHeader className="border-b border-border/10 pb-4">
+            <DialogTitle asChild>
+              <h3 className="text-2xl font-extrabold text-success">
+                +300 Birr
+              </h3>
+            </DialogTitle>
+            <DialogDescription>Today</DialogDescription>
+          </DialogHeader>
+          <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-4">
+            <div className="flex flex-col gap-2">
+              <p className="flex justify-between border-b border-dashed border-border/30 text-foreground/50">
+                <span>Reason</span>
+                <span className="max-w-[50%] text-right font-mono! text-foreground/80">
+                  Meal payment split daskf sldkjfewoijfsld f slkfjdf
+                </span>
+              </p>
+              <p className="flex justify-between border-b border-dashed border-border/30 text-foreground/50">
+                <span>Cumulative up to this</span>
+                <span className="font-mono text-success">+480 Birr</span>
+              </p>
+              <p className="flex justify-between border-b border-dashed border-border/30 text-foreground/50">
+                <span>Created At</span>
+                <span className="font-mono text-foreground/80">
+                  {formatDate(new Date())}
+                </span>
+              </p>
+              <p className="flex justify-between border-b border-dashed border-border/30 text-foreground/50">
+                <span>Added By</span>
+                <span className="font-mono text-secondary">Abebe K.</span>
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <main className="flex min-h-full w-full flex-1 flex-col items-center gap-4 bg-background px-16 py-8 sm:items-start">
+        <Card className="flex h-76 w-full flex-col justify-end rounded-4xl bg-primary-gradient p-10 ring-0 border border-border">
+          <CardHeader className="gap-2 p-0">
+            <CardTitle className="text-lg text-background">
+              Haileab Tesfaye
+            </CardTitle>
+            <p className="text-4xl font-extrabold text-background">
+              +216.00 ETB
+            </p>
+            <CardDescription className="text-xs font-light text-card">
+              {formatDate(new Date())}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+
+        <div className="h-full! w-full rounded-4xl overflow-hidden">
+          <Card className="h-full! w-full gap-4 overflow-y-auto rounded-4xl border border-border p-4 bg-muted">
+            <CardContent className="w-full! flex flex-col gap-4 p-0">
+              {new Array(16).fill(0).map((_, i) => (
+                <Card
+                  key={i}
+                  className="h-max w-full cursor-pointer rounded-2xl border border-border bg-background p-4 ring-0 transition-colors hover:bg-muted/50"
+                  onClick={() => setLoanBookOpen(true)}
+                >
+                  <CardContent className="flex items-center justify-between p-0">
+                    <div>
+                      <CardTitle className="font-bold">Abebe Kebede</CardTitle>
+                      <CardDescription className="font-mono text-foreground/70">
+                        +210 Birr loan. 27th Mar, 2026
+                      </CardDescription>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </AppDialog>
-          ))}
+                    <span className="text-primary">+185.00 Birr</span>
+                  </CardContent>
+                </Card>
+              ))}
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>

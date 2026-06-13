@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
-import { Roboto_Mono, Google_Sans } from "next/font/google";
+import { Roboto_Mono, Google_Sans, Geist } from "next/font/google";
 import "./globals.css";
 import AppNav from "@/components/app-nav";
+import { ThemeProvider } from "@/components/theme-provider";
+import { cn } from "@/lib/utils";
+import { themeInitScript } from "@/lib/theme";
+
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+
 const spaceGrotesk = Google_Sans({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
@@ -26,18 +32,33 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${robotoMono.variable} h-full antialiased `}
+      suppressHydrationWarning
+      className={cn(
+        " h-full",
+        "antialiased",
+        spaceGrotesk.variable,
+        robotoMono.variable,
+        "font-sans",
+        geist.variable,
+      )}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body
         className={
-          "h-svh relative flex flex-col max-w-2xl w-[calc(100%-1rem)] mx-auto overflow-hidden " +
+          "h-svh relative flex flex-col overflow-hidden " +
           spaceGrotesk.className
         }
       >
-        <header className="-mt-2 w-full mx-auto h-max absolute bg-transparent">
-          <AppNav />
-        </header>
-        <div className="h-full">{children}</div>
+        <ThemeProvider>
+          <div className="h-full w-full max-w-2xl w-[calc(100%-1rem)] mx-auto flex flex-col">
+            <header className="-mt-2 w-full mx-auto h-max absolute bg-transparent">
+              <AppNav />
+            </header>
+            <div className="h-full w-full">{children}</div>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
