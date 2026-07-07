@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto_Mono, Google_Sans, Geist } from "next/font/google";
 import "./globals.css";
-import AppNav from "@/components/app-nav";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { themeInitScript } from "@/lib/theme";
@@ -52,9 +51,6 @@ export default async function RootLayout({
         }
       >
         <ThemeProvider>
-          <header className="bg-transparent -mt-2 z-1000! w-full mx-auto h-max absolute ">
-            <AppNav />
-          </header>
           <div className="h-full max-w-2xl w-[calc(100%-1rem)] mx-auto flex flex-col">
             <div className="h-full w-full">{children}</div>
           </div>

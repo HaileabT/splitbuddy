@@ -1,5 +1,6 @@
 "use client";
 
+import AppNav from "@/components/app-nav";
 import { NewBookButton } from "@/components/new-book-btn";
 import { RecordForm } from "@/components/record-form";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,9 @@ export default function Home() {
 
   return (
     <div className="flex relative h-full flex-col w-full items-center justify-center bg-background font-sans">
+      <header className="bg-transparent -mt-2 z-10000! w-full mx-auto h-max fixed -top-1 ">
+        <AppNav />
+      </header>
       <Dialog open={createTxOpen} onOpenChange={setCreateTxOpen}>
         <DialogContent
           showCloseButton={false}

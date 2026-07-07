@@ -17,12 +17,18 @@ export default function SignUp() {
       footer={
         <p className="text-center text-foreground/50">
           If you already have an account,{" "}
-          <AppLink href="/auth/sign-in">sign in here</AppLink>.
+          <AppLink href="/sign-in">sign in here</AppLink>.
         </p>
       }
     >
       <div className=" flex flex-col gap-4">
-        <AppInput type="text" name="email" placeholder="email" />
+        <AppInput type="text" name="name" label="name" placeholder="Abebe" />
+        <AppInput
+          type="text"
+          name="email"
+          label="email"
+          placeholder="abebe.kebede@gmail.com"
+        />
         {/*<AppInput type="password" name="password" placeholder="password" />*/}
       </div>
       <AppButton variant="primary" isLoading={isLoading}>

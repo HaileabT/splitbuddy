@@ -27,7 +27,7 @@ export default function AppInput({
       )}
       <Input
         className={cn(
-          "text-foreground/80 text-2xl! border border-foreground/20 w-full py-10! px-4! font-mono outline-none focus:outline-secondary! focus:outline-solid focus:outline-1 rounded-md",
+          "text-foreground/80 text-base! border border-foreground/20 w-full py-2! px-2! font-mono outline-none focus:outline-secondary! focus:outline-solid focus:outline-1 rounded-md",
           className,
         )}
         type={type}

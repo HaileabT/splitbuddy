@@ -17,7 +17,7 @@ export default function SignIn() {
       footer={
         <p className="text-center text-foreground/50">
           If you don&apos;t have an account,{" "}
-          <AppLink href="/auth/sign-up">register</AppLink>.
+          <AppLink href="/sign-up">register</AppLink>.
         </p>
       }
     >
