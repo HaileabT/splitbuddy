@@ -1,5 +1,6 @@
 "use client";
 
+import { NewBookButton } from "@/components/new-book-btn";
 import { RecordForm } from "@/components/record-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +28,7 @@ export default function Home() {
   const [loanBookOpen, setLoanBookOpen] = useState(false);
 
   return (
-    <div className="flex h-full flex-col w-full items-center justify-center bg-background font-sans">
+    <div className="flex relative h-full flex-col w-full items-center justify-center bg-background font-sans">
       <Dialog open={createTxOpen} onOpenChange={setCreateTxOpen}>
         <DialogContent
           showCloseButton={false}
@@ -62,7 +63,11 @@ export default function Home() {
                 <span className="font-bold text-success">185 Birr</span>
               </DialogDescription>
             </div>
-            <Button size="icon" onClick={() => setCreateTxOpen(true)}>
+            <Button
+              size="icon"
+              className="cursor-pointer"
+              onClick={() => setCreateTxOpen(true)}
+            >
               <Plus />
             </Button>
           </DialogHeader>
@@ -147,8 +152,8 @@ export default function Home() {
         </DialogContent>
       </Dialog>
 
-      <main className="flex min-h-full w-full flex-1 flex-col items-center gap-4 bg-background px-16 py-8 sm:items-start">
-        <Card className="flex h-76 w-full flex-col justify-end rounded-4xl bg-primary-gradient p-10 ring-0 border border-border">
+      <main className="flex relative min-h-full w-full flex-1 flex-col items-center gap-4 bg-background px-2 md:px-16 py-4 md:py-8 sm:items-start">
+        <Card className="flex h-76 w-full flex-col justify-end rounded-4xl bg-primary-gradient p-5 md:p-10 ring-0 border border-border">
           <CardHeader className="gap-2 p-0">
             <CardTitle className="text-lg text-background">
               Haileab Tesfaye
@@ -162,8 +167,11 @@ export default function Home() {
           </CardHeader>
         </Card>
 
-        <div className="h-full! w-full rounded-4xl overflow-hidden">
-          <Card className="h-full! w-full gap-4 overflow-y-auto rounded-4xl border border-border p-4 bg-muted">
+        <div className="h-full! relative w-full rounded-4xl overflow-hidden">
+          <div className="absolute bottom-3 right-3">
+            <NewBookButton />
+          </div>
+          <Card className="h-full! w-full gap-4 overflow-y-auto rounded-4xl border border-border p-4 bg-card">
             <CardContent className="w-full! flex flex-col gap-4 p-0">
               {new Array(16).fill(0).map((_, i) => (
                 <Card

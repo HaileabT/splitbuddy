@@ -18,7 +18,7 @@ export default function AuthFormPage({
       <div className="w-full max-w-100">
         <AuthCardOuterTitle title={title} />
         <form
-          className="p-4 flex flex-col gap-4 bg-card rounded-md rounded-t-none  border-foreground/20 border-[1px] border-t-none w-full"
+          className="p-4 flex flex-col gap-4 bg-card rounded-md rounded-t-none  border-foreground/20 border border-t-none w-full"
           onSubmit={(e) => {
             e.preventDefault();
             if (onSubmit) onSubmit();

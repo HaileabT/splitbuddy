@@ -52,10 +52,10 @@ export default async function RootLayout({
         }
       >
         <ThemeProvider>
-          <div className="h-full w-full max-w-2xl w-[calc(100%-1rem)] mx-auto flex flex-col">
-            <header className="-mt-2 w-full mx-auto h-max absolute bg-transparent">
-              <AppNav />
-            </header>
+          <header className="bg-transparent -mt-2 z-1000! w-full mx-auto h-max absolute ">
+            <AppNav />
+          </header>
+          <div className="h-full max-w-2xl w-[calc(100%-1rem)] mx-auto flex flex-col">
             <div className="h-full w-full">{children}</div>
           </div>
         </ThemeProvider>
