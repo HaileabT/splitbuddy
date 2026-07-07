@@ -7,10 +7,10 @@ import { themeInitScript } from "@/lib/theme";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
-const spaceGrotesk = Google_Sans({
-  variable: "--font-space-grotesk",
+const googleSans = Google_Sans({
+  variable: "--font-google-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  fallback: ["sans-serif"],
 });
 
 const robotoMono = Roboto_Mono({
@@ -35,7 +35,7 @@ export default async function RootLayout({
       className={cn(
         " h-full",
         "antialiased",
-        spaceGrotesk.variable,
+        googleSans.variable,
         robotoMono.variable,
         "font-sans",
         geist.variable,
@@ -46,8 +46,7 @@ export default async function RootLayout({
       </head>
       <body
         className={
-          "h-svh relative flex flex-col overflow-hidden " +
-          spaceGrotesk.className
+          "h-svh relative flex flex-col overflow-hidden " + googleSans.className
         }
       >
         <ThemeProvider>
