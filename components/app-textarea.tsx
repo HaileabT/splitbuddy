@@ -41,7 +41,7 @@ export function AppTextarea({
         onBlur={(e) => onBlur?.(e.target.value)}
         className={cn(
           `font-mono leading-6
-        bg-card!  bg-[radial-gradient(circle,rgba(255,255,255,0.15)_1px,transparent_1px)] bg-[length:1rem_1rem]`,
+        bg-card!  bg-[radial-gradient(circle,var(--dim-foreground)_1px,transparent_1px)] bg-[length:1rem_1rem]`,
           className,
         )}
       ></Textarea>

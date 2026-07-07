@@ -15,11 +15,10 @@ export default function Settings() {
               </div>
               <ThemeToggle />
             </div>
-            <div className="flex items-center justify-between gap-4 border border-foreground/10 rounded-xl p-4">
+            <div className="hidden items-center justify-between gap-4 border border-foreground/10 rounded-xl p-4">
               <div>
                 <p className="font-medium">Notifications</p>
               </div>
-              <ThemeToggle />
             </div>
           </div>
         </div>

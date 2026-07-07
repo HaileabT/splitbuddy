@@ -10,7 +10,7 @@ export function BookForm() {
         placeholder="some.dude@gomail.com"
         boxClassName="w-full"
         name="member email"
-        className="bg-background! p-2! py-4! text-base! w-full!  bg-[radial-gradient(circle,rgba(255,255,255,0.15)_1px,transparent_1px)] bg-[length:1rem_1rem]"
+        className="bg-background! p-2! py-4! text-base! w-full!  bg-[radial-gradient(circle,var(--dim-foreground)_1px,transparent_1px)] bg-[length:1rem_1rem]"
         type="email"
       />
       <AppButton>Invite</AppButton>

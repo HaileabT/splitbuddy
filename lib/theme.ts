@@ -1,16 +1,16 @@
 export const THEME_STORAGE_KEY = "splitbuddy-theme";
 
-export type Theme = "light" | "dark" | "system";
+export type Theme = "light" | "dark";
 
-export function getSystemTheme(): Theme {
-  if (typeof window === "undefined") {
-    return "light";
-  }
+// export function getSystemTheme(): Theme {
+//   if (typeof window === "undefined") {
+//     return "light";
+//   }
 
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
+//   return window.matchMedia("(prefers-color-scheme: dark)").matches
+//     ? "dark"
+//     : "light";
+// }
 
 export function getStoredTheme(): Theme | null {
   if (typeof window === "undefined") {
@@ -18,11 +18,11 @@ export function getStoredTheme(): Theme | null {
   }
 
   const stored = localStorage.getItem(THEME_STORAGE_KEY);
-  return stored === "light" || stored === "dark" || stored === "system" ? stored : null;
+  return stored as Theme | null;
 }
 
 export function resolveTheme(): Theme {
-  return getStoredTheme() ?? getSystemTheme();
+  return getStoredTheme() ?? "dark";
 }
 
 export function applyTheme(theme: Theme) {
@@ -31,9 +31,6 @@ export function applyTheme(theme: Theme) {
 
 export function setTheme(theme: Theme) {
   localStorage.setItem(THEME_STORAGE_KEY, theme);
-  if (theme === "system") {
-    theme = getSystemTheme() || "dark"
-  }
   applyTheme(theme);
 }
 

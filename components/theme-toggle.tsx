@@ -22,10 +22,6 @@ export function ThemeToggle() {
       icon: Sun,
       title: "Light Mode",
     },
-    system: {
-      icon: Computer,
-      title: "System",
-    },
   };
 
   const toggleValue = toggleOptions[theme];

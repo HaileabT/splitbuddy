@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  applyTheme,
-  getStoredTheme,
-  getSystemTheme,
-  setTheme,
-  type Theme,
-} from "@/lib/theme";
+import { applyTheme, getStoredTheme, setTheme, type Theme } from "@/lib/theme";
 import {
   createContext,
   useCallback,
@@ -23,32 +17,18 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system");
+  const [theme, setThemeState] = useState<Theme>("dark");
 
   useEffect(() => {
-    function applySystemTheme() {
-      const currentMode = getStoredTheme() || "system";
-      if (currentMode === "system") {
-        setTheme("system");
-      }
-    }
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
-    prefersDark.addEventListener("change", applySystemTheme);
     let resolved = getStoredTheme();
-    if (resolved && ["light", "dark", "system"].includes(resolved)) {
+    if (resolved && ["light", "dark"].includes(resolved)) {
       let themeValue = resolved;
-      if (resolved === "system") {
-        themeValue = getSystemTheme() || "dark";
-      }
       setThemeState(resolved);
       applyTheme(themeValue);
     } else {
-      setThemeState("system");
-      setTheme("system");
+      setThemeState("dark");
+      setTheme("dark");
     }
-    return () => {
-      prefersDark.removeEventListener("change", applySystemTheme);
-    };
   }, []);
 
   const toggleTheme = useCallback(() => {
@@ -57,11 +37,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (current === "dark") {
         next = "light";
       } else if (current === "light") {
-        next = "system";
-      } else if (current === "system") {
         next = "dark";
       } else {
-        next = "system";
+        next = "dark";
       }
       setTheme(next);
       return next;
