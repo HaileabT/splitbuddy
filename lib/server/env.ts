@@ -1,4 +1,10 @@
-import "server-only";
+// import "server-only";
+import { configDotenv } from "dotenv";
+
+configDotenv({
+  path: process.env.NODE_ENV === "production" ? ".env.prod" : ".env.dev"
+})
+
 const databaseUrlValidator = (envVal: string) => {
   const value = typeof envVal === "string" ? envVal.trim() : undefined;
   if (!value) {
@@ -76,6 +82,7 @@ export const getValidatorsAndEnvDiff = (keys: string[]) => {
 };
 
 export const getEnv = (key: string, defaultValue: string): string => {
+  console.log("ENVVAR ACCESSED:", key)
   return process.env[key] ?? defaultValue;
 };
 

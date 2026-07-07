@@ -1,4 +1,8 @@
+import { getDb } from ".."
+
 function create() {
+const db = getDb();
+
 
 }
 

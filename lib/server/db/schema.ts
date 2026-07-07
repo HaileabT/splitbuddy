@@ -13,7 +13,7 @@ export const users = pgTable(
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
-    password: text("password").notNull(),
+    password: text("password"),
 
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
@@ -23,6 +23,9 @@ export const users = pgTable(
   },
   (table) => [index("users_email_idx").on(table.email)],
 );
+
+
+
 
 export const loanBooks = pgTable(
   "loan_books",
