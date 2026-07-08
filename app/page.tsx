@@ -1,6 +1,8 @@
 "use client";
 
+import AppButton from "@/components/app-button";
 import AppNav from "@/components/app-nav";
+import { UpdateBookForm } from "@/components/book-form";
 import { NewBookButton } from "@/components/new-book-btn";
 import { RecordForm } from "@/components/record-form";
 import { Button } from "@/components/ui/button";
@@ -20,11 +22,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { formatDate } from "@/lib/utils/dates";
-import { Plus } from "lucide-react";
+import { Edit2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 export default function Home() {
   const [createTxOpen, setCreateTxOpen] = useState(false);
+  const [updateBookOpen, setUpdateBookOpen] = useState(false);
+  const [deleteBookOpen, setDeleteBookOpen] = useState(false);
   const [txDetailsOpen, setTxDetailsOpen] = useState(false);
   const [loanBookOpen, setLoanBookOpen] = useState(false);
 
@@ -52,6 +56,55 @@ export default function Home() {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={updateBookOpen} onOpenChange={setUpdateBookOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="z-100 max-w-xl gap-4 rounded-4xl border border-border bg-card sm:max-w-xl overflow-hidden p-6"
+        >
+          <DialogHeader className="border-b border-border/10 pb-4">
+            <DialogTitle className="text-lg font-bold">Rename Book</DialogTitle>
+            <DialogDescription className="sr-only">
+              Give it a new name
+            </DialogDescription>
+          </DialogHeader>
+          <div className="w-full rounded-xl border border-border/10  flex flex-col gap-4">
+            <UpdateBookForm />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteBookOpen} onOpenChange={setDeleteBookOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="z-100 max-w-xl gap-4 rounded-4xl border border-border bg-card p-0 sm:max-w-xl overflow-hidden"
+        >
+          <DialogHeader className="border-b border-border/10 p-6 pb-4 bg-destructive">
+            <DialogTitle className="text-lg font-bold">
+              Are you sure?
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              This action is irriversible and you cannot undo.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 p-6 pt-2 flex flex-col gap-4">
+            <strong className="text-lg font-light">
+              This action will remove your loan book with name{" "}
+              <span className="font-bold">Ye Sira Bota</span> with{" "}
+              <span className="font-bold">Abebe Kebede</span>. Are you sure?
+            </strong>
+
+            <div className="flex gap-4">
+              <Button className="cursor-pointer">Nah, Let's Keep it</Button>
+              <AppButton className="bg-muted! hover:bg-destructive! group">
+                <span className="text-destructive group-hover:text-muted">
+                  Remove
+                </span>
+              </AppButton>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={loanBookOpen} onOpenChange={setLoanBookOpen}>
         <DialogContent
           showCloseButton={false}
@@ -59,21 +112,38 @@ export default function Home() {
         >
           <DialogHeader className="flex-row items-start justify-between border-b border-border/10 pb-4">
             <div>
-              <DialogTitle className="text-lg font-bold">
-                with Abebe Kebede
+              <DialogTitle className="text-sm font-light">
+                <span className="font-bold text-lg">Ye Sira Bota</span> with
+                Abebe Kebede
               </DialogTitle>
               <DialogDescription>
                 He owes you{" "}
                 <span className="font-bold text-success">185 Birr</span>
               </DialogDescription>
             </div>
-            <Button
-              size="icon"
-              className="cursor-pointer"
-              onClick={() => setCreateTxOpen(true)}
-            >
-              <Plus />
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                size="icon"
+                className="cursor-pointer bg-transparent hover:bg-primary/10 text-primary"
+                onClick={() => setCreateTxOpen(true)}
+              >
+                <Plus />
+              </Button>
+              <Button
+                size="icon"
+                className="cursor-pointer bg-transparent hover:bg-foreground/10 text-foreground"
+                onClick={() => setUpdateBookOpen(true)}
+              >
+                <Edit2 />
+              </Button>
+              <Button
+                size="icon"
+                className="cursor-pointer bg-transparent hover:bg-destructive/10 text-destructive"
+                onClick={() => setDeleteBookOpen(true)}
+              >
+                <Trash2 />
+              </Button>
+            </div>
           </DialogHeader>
           <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-4">
             <h2 className="mb-1 underline">Recent Records</h2>

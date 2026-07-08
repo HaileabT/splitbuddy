@@ -1,4 +1,5 @@
 "use client";
+import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 interface AppButtonProps {
   children: React.ReactNode;
@@ -23,7 +24,10 @@ export default function AppButton({
   disabled = typeof disabled === "undefined" ? false : disabled;
   return (
     <button
-      className={`relative rounded-md disabled:bg-secondary/30 disabled:text-foreground/60 bg-primary text-background w-max py-1 px-4 cursor-pointer font-mono ${className} ${variant === "primary" ? "primary" : "secondary"}}`}
+      className={cn(
+        `relative rounded-md disabled:bg-secondary/30 disabled:text-foreground/60 bg-primary text-background w-max py-1 px-4 cursor-pointer font-mono`,
+        `${className} ${variant === "primary" ? "primary" : "secondary"}}`,
+      )}
       onClick={onClick}
       disabled={isLoading || disabled}
     >

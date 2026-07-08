@@ -1,5 +1,7 @@
+import { relations } from "drizzle-orm";
 import {
   index,
+  integer,
   pgEnum,
   pgTable,
   serial,
@@ -24,9 +26,6 @@ export const users = pgTable(
   },
   (table) => [index("users_email_idx").on(table.email)],
 );
-
-
-
 
 export const loanBooks = pgTable(
   "loan_books",
