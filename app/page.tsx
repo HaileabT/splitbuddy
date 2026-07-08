@@ -79,7 +79,7 @@ export default function Home() {
           showCloseButton={false}
           className="z-100 max-w-xl gap-4 rounded-4xl border border-border bg-card p-0 sm:max-w-xl overflow-hidden"
         >
-          <DialogHeader className="border-b border-border/10 p-6 pb-4 bg-destructive">
+          <DialogHeader className="border-b border-border/10 p-6 pb-4 bg-destructive text-white">
             <DialogTitle className="text-lg font-bold">
               Are you sure?
             </DialogTitle>
@@ -111,7 +111,7 @@ export default function Home() {
           showCloseButton={false}
           className="z-100 max-w-xl gap-4 rounded-4xl border border-border bg-card p-0 sm:max-w-xl overflow-hidden"
         >
-          <DialogHeader className="border-b border-border/10 p-6 pb-4 bg-destructive">
+          <DialogHeader className="border-b border-border/10 p-6 pb-4 bg-destructive text-white">
             <DialogTitle className="text-lg font-bold">
               Are you sure?
             </DialogTitle>
