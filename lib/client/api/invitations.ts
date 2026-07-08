@@ -1,4 +1,4 @@
-import { LoanBook } from "@/lib/server/db/schema"
+import { Invitation, LoanBook } from "@/lib/server/db/schema"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
 const invitationKeys = {
@@ -8,18 +8,18 @@ const invitationKeys = {
 }
 
 function useInvitation(id: string) {
-return useQuery<LoanBook[]>({
+return useQuery<Invitation>({
     queryKey: invitationKeys.single(id),
     queryFn: async () => {
         const res = await fetch("");
         const books = await res.json();
-        return books as LoanBook[];
+        return books as Invitation;
     }
 })
 }
 
 function useInvitationByBook(bookId: string) {
-    return useQuery<LoanBook>({
+    return useQuery<Invitation>({
         queryKey: invitationKeys.byBook(bookId),
         queryFn: async () => {
             const res = await fetch(bookId);
@@ -40,4 +40,4 @@ function useCancelInvitation(id: string) {
 
 
 
-export const booksClient = {useInvitation, useCancelInvitation, useInvitationByBook}
+export const invitationsClient = {useInvitation, useCancelInvitation, useInvitationByBook}
