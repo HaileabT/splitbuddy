@@ -1,5 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
+  AnyPgColumn,
+  decimal,
   index,
   integer,
   pgEnum,
@@ -27,6 +29,20 @@ export const users = pgTable(
   (table) => [index("users_email_idx").on(table.email)],
 );
 
+export const userRelations = relations(users, ({many}) => {
+  return {
+    loanBooks: many(loanBookMembers, {
+      relationName: "user_loan_book_membership"
+    }),
+    transactions: many(transactions, {
+      relationName: 'transaction_author'
+    }),
+    invitations: many(invitations, {
+      relationName: 'user_invitations'
+    })
+  }
+})
+
 export const loanBooks = pgTable(
   "loan_books",
   {
@@ -36,6 +52,20 @@ export const loanBooks = pgTable(
   },
   (table) => [index("loan_books_created_at_idx").on(table.createdAt), index("loan_books_name_idx").on(table.name)],
 );
+
+export const loanBookRelations = relations(loanBooks, ({many}) => {
+  return {
+    members: many(loanBookMembers, {
+      relationName: "loan_book_members"
+    }),
+    invitations: many(invitations, {
+      relationName: "loan_book_invitations"
+    }),
+    transactions: many(transactions, {
+      relationName: 'loan_book_transactions'
+    })
+  }
+})
 
 export const loanBookRole = pgEnum("loan_book_role", ["owner", "member"]);
 
@@ -57,14 +87,37 @@ export const loanBookMembers = pgTable(
   ],
 );
 
+export const loanBookMemberRelations = relations(loanBookMembers, ({one}) => {
+  return {
+    member: one(users, {
+      fields: [loanBookMembers.userId],
+      references: [users.id],
+      relationName: "user_loan_book_membership",
+    }),
+    loanBook: one(loanBooks, {
+      fields: [loanBookMembers.loanBookId],
+      references: [loanBooks.id],
+      relationName: "loan_book_members"
+    })
+  }
+})
+
 export const transactions = pgTable(
   "transactions",
   {
     id: serial("id").primaryKey(),
     loanBookId: integer("loan_book_id").references(() => loanBooks.id).notNull(),
     type: text("type").notNull(),
-    amount: text("amount").notNull(),
+    amount: decimal("amount", {
+      precision: 15,
+      scale: 2
+    }).notNull(),
+    paidAmount: decimal("paid_amount", {
+      precision: 15,
+      scale: 2
+    }),
     authorId: integer("authorId").references(() => users.id).notNull(),
+    parentId: integer("parent_id").references((): AnyPgColumn => transactions.id),
     note: text("note"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
@@ -73,6 +126,31 @@ export const transactions = pgTable(
     index("transactions_user_id_idx").on(table.authorId),
   ],
 );
+
+
+
+export const transactionRelations = relations(transactions, ({ one, many }) => ({
+  author: one(users, {
+    fields: [transactions.authorId],
+    references: [users.id],
+    relationName: "transaction_author",
+  }),
+  loanBook: one(loanBooks, {
+    fields: [transactions.loanBookId],
+    references: [loanBooks.id],
+    relationName: "loan_book_transactions"
+  }),
+
+  parent: one(transactions, {
+    fields: [transactions.parentId],
+    references: [transactions.id],
+    relationName: "parent",
+  }),
+
+  children: many(transactions, {
+    relationName: "parent",
+  }),
+}));
 
 export const invitationStatus = pgEnum("invitation_status", ["pending", "cancelled", "accepted"])
 
@@ -94,6 +172,19 @@ export const invitations = pgTable(
     index("invited_user_id_idx").on(table.invitedByUserId),
   ],
 );
+
+export const invitationRelations = relations(invitations, ({ one, many }) => ({
+  author: one(users, {
+    fields: [invitations.invitedByUserId],
+    references: [users.id],
+    relationName: "user_invitations",
+  }),
+  loanBook: one(loanBooks, {
+    fields: [invitations.loanBookId],
+    references: [loanBooks.id],
+    relationName: "loan_book_invitations"
+  }),
+}));
 
 
 export type User = typeof users.$inferSelect;
