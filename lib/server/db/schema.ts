@@ -5,6 +5,7 @@ import {
   serial,
   text,
   timestamp,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable(
@@ -31,12 +32,13 @@ export const loanBooks = pgTable(
   "loan_books",
   {
     id: serial("id").primaryKey(),
+    name: varchar("name", {length: 128}),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
-  (table) => [index("loan_books_created_at_idx").on(table.createdAt)],
+  (table) => [index("loan_books_created_at_idx").on(table.createdAt), index("loan_books_name_idx").on(table.name)],
 );
 
-const loanBookRole = pgEnum("loan_book_role", ["owner", "member"]);
+export const loanBookRole = pgEnum("loan_book_role", ["owner", "member"]);
 
 export const loanBookMembers = pgTable(
   "loan_book_members",
