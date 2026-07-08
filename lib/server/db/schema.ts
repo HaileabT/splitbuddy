@@ -43,15 +43,17 @@ export const loanBookMembers = pgTable(
   "loan_book_members",
   {
     id: serial("id").primaryKey(),
-    userId: text("user_id").notNull(),
-    loanBookId: text("loan_book_id").notNull(),
+    userId: text("user_id").references(() => users.id).notNull(),
+    loanBookId: text("loan_book_id").references(() => loanBooks.id).notNull(),
     role: loanBookRole("role").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => [
     index("loan_book_members_user_id_idx").on(table.userId),
     index("loan_book_members_loan_book_id_idx").on(table.loanBookId),
+    index("loan_book_members_roles_on_book_ids_idx").on(table.role, table.loanBookId),
     index("loan_book_members_role_idx").on(table.role),
+    index("loan_book_member_ids_on_roles_idx").on(table.role, table.userId)
   ],
 );
 
@@ -59,18 +61,16 @@ export const transactions = pgTable(
   "transactions",
   {
     id: serial("id").primaryKey(),
-    loanBookId: text("loan_book_id").notNull(),
+    loanBookId: text("loan_book_id").references(() => loanBooks.id).notNull(),
     type: text("type").notNull(),
     amount: text("amount").notNull(),
-    fromUserId: text("from_user_id").notNull(),
-    toUserId: text("to_user_id").notNull(),
+    authorId: text("authorId").references(() => users.id).notNull(),
     note: text("note"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => [
     index("transactions_loan_book_id_idx").on(table.loanBookId),
-    index("transactions_from_user_id_idx").on(table.fromUserId),
-    index("transactions_to_user_id_idx").on(table.toUserId),
+    index("transactions_user_id_idx").on(table.authorId),
   ],
 );
 
@@ -78,8 +78,8 @@ export const invites = pgTable(
   "invites",
   {
     id: serial("id").primaryKey(),
-    loanBookId: text("loan_book_id").notNull(),
-    invitedByUserId: text("invited_by_user_id").notNull(),
+    loanBookId: text("loan_book_id").references(() => loanBooks.id).notNull(),
+    invitedByUserId: text("invited_by_user_id").references(() => users.id).notNull(),
     identifier: text("identifier").notNull(),
     status: text("status"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -91,3 +91,19 @@ export const invites = pgTable(
     index("invited_user_id_idx").on(table.invitedByUserId),
   ],
 );
+
+
+export type User = typeof users.$inferSelect;
+export type UserCreate = typeof users.$inferInsert;
+
+export type LoanBook = typeof loanBooks.$inferSelect;
+export type LoanBookCreate = typeof loanBooks.$inferInsert;
+
+export type LoanBookMember = typeof loanBookMembers.$inferSelect;
+export type LoanBookMemberCreate = typeof loanBookMembers.$inferInsert;
+
+export type Invitation = typeof invites.$inferSelect;
+export type InvitationCreate = typeof invites.$inferInsert;
+
+export type Transaction = typeof transactions.$inferSelect;
+export type TransactionCreate = typeof transactions.$inferInsert;

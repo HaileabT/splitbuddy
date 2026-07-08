@@ -26,10 +26,11 @@ import { Edit2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 export default function Home() {
-  const [createTxOpen, setCreateTxOpen] = useState(false);
   const [updateBookOpen, setUpdateBookOpen] = useState(false);
   const [deleteBookOpen, setDeleteBookOpen] = useState(false);
+  const [createTxOpen, setCreateTxOpen] = useState(false);
   const [txDetailsOpen, setTxDetailsOpen] = useState(false);
+  const [deleteTxOpen, setDeleteTxOpen] = useState(false);
   const [loanBookOpen, setLoanBookOpen] = useState(false);
 
   return (
@@ -91,6 +92,39 @@ export default function Home() {
               This action will remove your loan book with name{" "}
               <span className="font-bold">Ye Sira Bota</span> with{" "}
               <span className="font-bold">Abebe Kebede</span>. Are you sure?
+            </strong>
+
+            <div className="flex gap-4">
+              <Button className="cursor-pointer">Nah, Let's Keep it</Button>
+              <AppButton className="bg-muted! hover:bg-destructive! group">
+                <span className="text-destructive group-hover:text-muted">
+                  Remove
+                </span>
+              </AppButton>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteTxOpen} onOpenChange={setDeleteTxOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="z-100 max-w-xl gap-4 rounded-4xl border border-border bg-card p-0 sm:max-w-xl overflow-hidden"
+        >
+          <DialogHeader className="border-b border-border/10 p-6 pb-4 bg-destructive">
+            <DialogTitle className="text-lg font-bold">
+              Are you sure?
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              This action is irriversible and you cannot undo.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 p-6 pt-2 flex flex-col gap-4">
+            <strong className="text-lg font-light">
+              This action will remove this transaction from loan book name{" "}
+              <span className="font-bold">Ye Sira Bota</span> with{" "}
+              <span className="font-bold">Abebe Kebede</span> amount{" "}
+              <span className="font-bold">150.00 Birr</span>. Are you sure?
             </strong>
 
             <div className="flex gap-4">
@@ -191,13 +225,24 @@ export default function Home() {
           showCloseButton={false}
           className="z-100 max-w-xl gap-4 rounded-4xl border border-border/10 bg-card p-6 sm:max-w-xl"
         >
-          <DialogHeader className="border-b border-border/10 pb-4">
-            <DialogTitle asChild>
-              <h3 className="text-2xl font-extrabold text-success">
-                +300 Birr
-              </h3>
-            </DialogTitle>
-            <DialogDescription>Today</DialogDescription>
+          <DialogHeader className="border-b border-border/10 pb-4 flex flex-row justify-between w-full">
+            <div>
+              <DialogTitle asChild>
+                <h3 className="text-2xl font-extrabold text-success">
+                  +300 Birr
+                </h3>
+              </DialogTitle>
+              <DialogDescription>Today</DialogDescription>
+            </div>
+            <div>
+              <Button
+                size="icon"
+                className="cursor-pointer bg-transparent hover:bg-destructive/10 text-destructive"
+                onClick={() => setDeleteTxOpen(true)}
+              >
+                <Trash2 />
+              </Button>
+            </div>
           </DialogHeader>
           <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-4">
             <div className="flex flex-col gap-2">
