@@ -22,7 +22,7 @@ import {
 export function NewBookButton() {
   return (
     <Dialog>
-      <DialogOverlay className="backdrop-blur-md!" />
+      <DialogOverlay className="backdrop-blur-md" />
       <DialogTrigger asChild>
         <Button
           variant="outline"

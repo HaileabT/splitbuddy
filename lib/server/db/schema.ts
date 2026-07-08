@@ -43,8 +43,8 @@ export const loanBookMembers = pgTable(
   "loan_book_members",
   {
     id: serial("id").primaryKey(),
-    userId: text("user_id").references(() => users.id).notNull(),
-    loanBookId: text("loan_book_id").references(() => loanBooks.id).notNull(),
+    userId: integer("user_id").references(() => users.id).notNull(),
+    loanBookId: integer("loan_book_id").references(() => loanBooks.id).notNull(),
     role: loanBookRole("role").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
@@ -61,10 +61,10 @@ export const transactions = pgTable(
   "transactions",
   {
     id: serial("id").primaryKey(),
-    loanBookId: text("loan_book_id").references(() => loanBooks.id).notNull(),
+    loanBookId: integer("loan_book_id").references(() => loanBooks.id).notNull(),
     type: text("type").notNull(),
     amount: text("amount").notNull(),
-    authorId: text("authorId").references(() => users.id).notNull(),
+    authorId: integer("authorId").references(() => users.id).notNull(),
     note: text("note"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
@@ -74,20 +74,23 @@ export const transactions = pgTable(
   ],
 );
 
-export const invites = pgTable(
-  "invites",
+export const invitationStatus = pgEnum("invitation_status", ["pending", "canceled", "accepted"])
+
+export const invitations = pgTable(
+  "invitations",
   {
     id: serial("id").primaryKey(),
-    loanBookId: text("loan_book_id").references(() => loanBooks.id).notNull(),
-    invitedByUserId: text("invited_by_user_id").references(() => users.id).notNull(),
-    identifier: text("identifier").notNull(),
-    status: text("status"),
+    loanBookId: integer("loan_book_id").references(() => loanBooks.id).notNull(),
+    invitedByUserId: integer("invited_by_user_id").references(() => users.id).notNull(),
+    invitedUserEmail: text("invited_user_email").notNull(),
+    key: text("key").notNull(),
+    status: invitationStatus(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => [
-    index("invites_loan_book_id_idx").on(table.loanBookId),
-    index("invites_identifier_idx").on(table.identifier),
-    index("invites_status_idx").on(table.status),
+    index("invitations_loan_book_id_idx").on(table.loanBookId),
+    index("invitations_identifier_idx").on(table.key),
+    index("invitations_status_idx").on(table.status),
     index("invited_user_id_idx").on(table.invitedByUserId),
   ],
 );
@@ -102,8 +105,8 @@ export type LoanBookCreate = typeof loanBooks.$inferInsert;
 export type LoanBookMember = typeof loanBookMembers.$inferSelect;
 export type LoanBookMemberCreate = typeof loanBookMembers.$inferInsert;
 
-export type Invitation = typeof invites.$inferSelect;
-export type InvitationCreate = typeof invites.$inferInsert;
+export type Invitation = typeof invitations.$inferSelect;
+export type InvitationCreate = typeof invitations.$inferInsert;
 
 export type Transaction = typeof transactions.$inferSelect;
 export type TransactionCreate = typeof transactions.$inferInsert;

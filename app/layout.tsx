@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { themeInitScript } from "@/lib/theme";
+import { QueryProvider } from "@/providers/query-provider";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -50,9 +51,11 @@ export default async function RootLayout({
         }
       >
         <ThemeProvider>
-          <div className="h-full max-w-2xl w-[calc(100%-1rem)] mx-auto flex flex-col">
-            <div className="h-full w-full">{children}</div>
-          </div>
+          <QueryProvider>
+            <div className="h-full max-w-2xl w-[calc(100%-1rem)] mx-auto flex flex-col">
+              <div className="h-full w-full">{children}</div>
+            </div>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

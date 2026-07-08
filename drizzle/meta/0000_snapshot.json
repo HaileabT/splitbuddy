@@ -1,11 +1,11 @@
 {
-  "id": "d2b1fc34-18aa-4e72-9aa0-fc3f046f066f",
+  "id": "6fb28d0b-f4be-4868-a96c-c1f43bd39229",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.invites": {
-      "name": "invites",
+    "public.invitations": {
+      "name": "invitations",
       "schema": "",
       "columns": {
         "id": {
@@ -16,25 +16,32 @@
         },
         "loan_book_id": {
           "name": "loan_book_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "invited_by_user_id": {
           "name": "invited_by_user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invited_user_email": {
+          "name": "invited_user_email",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "identifier": {
-          "name": "identifier",
+        "key": {
+          "name": "key",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "invitation_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         },
@@ -47,8 +54,8 @@
         }
       },
       "indexes": {
-        "invites_loan_book_id_idx": {
-          "name": "invites_loan_book_id_idx",
+        "invitations_loan_book_id_idx": {
+          "name": "invitations_loan_book_id_idx",
           "columns": [
             {
               "expression": "loan_book_id",
@@ -62,11 +69,11 @@
           "method": "btree",
           "with": {}
         },
-        "invites_identifier_idx": {
-          "name": "invites_identifier_idx",
+        "invitations_identifier_idx": {
+          "name": "invitations_identifier_idx",
           "columns": [
             {
-              "expression": "identifier",
+              "expression": "key",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -77,8 +84,8 @@
           "method": "btree",
           "with": {}
         },
-        "invites_status_idx": {
-          "name": "invites_status_idx",
+        "invitations_status_idx": {
+          "name": "invitations_status_idx",
           "columns": [
             {
               "expression": "status",
@@ -108,7 +115,34 @@
           "with": {}
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "invitations_loan_book_id_loan_books_id_fk": {
+          "name": "invitations_loan_book_id_loan_books_id_fk",
+          "tableFrom": "invitations",
+          "tableTo": "loan_books",
+          "columnsFrom": [
+            "loan_book_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "invitations_invited_by_user_id_users_id_fk": {
+          "name": "invitations_invited_by_user_id_users_id_fk",
+          "tableFrom": "invitations",
+          "tableTo": "users",
+          "columnsFrom": [
+            "invited_by_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -127,13 +161,13 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "loan_book_id": {
           "name": "loan_book_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -183,6 +217,27 @@
           "method": "btree",
           "with": {}
         },
+        "loan_book_members_roles_on_book_ids_idx": {
+          "name": "loan_book_members_roles_on_book_ids_idx",
+          "columns": [
+            {
+              "expression": "role",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "loan_book_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "loan_book_members_role_idx": {
           "name": "loan_book_members_role_idx",
           "columns": [
@@ -197,9 +252,57 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "loan_book_member_ids_on_roles_idx": {
+          "name": "loan_book_member_ids_on_roles_idx",
+          "columns": [
+            {
+              "expression": "role",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "loan_book_members_user_id_users_id_fk": {
+          "name": "loan_book_members_user_id_users_id_fk",
+          "tableFrom": "loan_book_members",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "loan_book_members_loan_book_id_loan_books_id_fk": {
+          "name": "loan_book_members_loan_book_id_loan_books_id_fk",
+          "tableFrom": "loan_book_members",
+          "tableTo": "loan_books",
+          "columnsFrom": [
+            "loan_book_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -216,6 +319,12 @@
           "primaryKey": true,
           "notNull": true
         },
+        "name": {
+          "name": "name",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -230,6 +339,21 @@
           "columns": [
             {
               "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "loan_books_name_idx": {
+          "name": "loan_books_name_idx",
+          "columns": [
+            {
+              "expression": "name",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -260,7 +384,7 @@
         },
         "loan_book_id": {
           "name": "loan_book_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -276,15 +400,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "from_user_id": {
-          "name": "from_user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "to_user_id": {
-          "name": "to_user_id",
-          "type": "text",
+        "authorId": {
+          "name": "authorId",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -318,26 +436,11 @@
           "method": "btree",
           "with": {}
         },
-        "transactions_from_user_id_idx": {
-          "name": "transactions_from_user_id_idx",
+        "transactions_user_id_idx": {
+          "name": "transactions_user_id_idx",
           "columns": [
             {
-              "expression": "from_user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "transactions_to_user_id_idx": {
-          "name": "transactions_to_user_id_idx",
-          "columns": [
-            {
-              "expression": "to_user_id",
+              "expression": "authorId",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -349,7 +452,34 @@
           "with": {}
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "transactions_loan_book_id_loan_books_id_fk": {
+          "name": "transactions_loan_book_id_loan_books_id_fk",
+          "tableFrom": "transactions",
+          "tableTo": "loan_books",
+          "columnsFrom": [
+            "loan_book_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "transactions_authorId_users_id_fk": {
+          "name": "transactions_authorId_users_id_fk",
+          "tableFrom": "transactions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "authorId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -432,7 +562,25 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.invitation_status": {
+      "name": "invitation_status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "canceled",
+        "accepted"
+      ]
+    },
+    "public.loan_book_role": {
+      "name": "loan_book_role",
+      "schema": "public",
+      "values": [
+        "owner",
+        "member"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},
