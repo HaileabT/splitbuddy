@@ -14,8 +14,12 @@ async function getMembers() {
 
 }
 
+async function update() {
+
+}
+
 async function remove() {
 
 }
 
-export const bookServices = {create, remove, inviteMember, removeMember, getMembers}
+export const bookServices = {create, remove, inviteMember, removeMember, getMembers, update}
