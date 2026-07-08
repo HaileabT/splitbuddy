@@ -32,7 +32,7 @@ export function NewBookButton() {
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="overflow-hidden bg-card border-0! outline-0! shadow-none! shadow-transparent border-transparent! w-[calc(100%-1rem)]! max-w-[500px]!"
+        className="overflow-hidden bg-card border-0! outline-0! shadow-none! shadow-transparent border-transparent! w-[calc(100%-1rem)]! max-w-125!"
         showCloseButton={false}
       >
         <DialogHeader className="bg-card rounded-md">

@@ -19,7 +19,7 @@ export function BookForm() {
           boxClassName="w-full"
           name="member-email"
           label="Email"
-          className="bg-background! p-2! py-4! text-base! w-full!  bg-[radial-gradient(circle,var(--dim-foreground)_1px,transparent_1px)] bg-[length:1rem_1rem]"
+          className="bg-background! p-2! py-4! text-base! w-full!  bg-[radial-gradient(circle,var(--dim-foreground)_1px,transparent_1px)] bg-size-[1rem_1rem]"
           type="email"
         />
         <AppButton>Invite</AppButton>
@@ -35,7 +35,7 @@ export function UpdateBookForm() {
         placeholder="name"
         boxClassName="w-full"
         name="book-name"
-        className="bg-background! p-2! py-4! text-base! w-full!  bg-[radial-gradient(circle,var(--dim-foreground)_1px,transparent_1px)] bg-[length:1rem_1rem]"
+        className="bg-background! p-2! py-4! text-base! w-full!  bg-[radial-gradient(circle,var(--dim-foreground)_1px,transparent_1px)] bg-size-[1rem_1rem]"
         type="text"
       />
       <AppButton>Update</AppButton>
