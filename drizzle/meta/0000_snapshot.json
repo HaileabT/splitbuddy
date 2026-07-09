@@ -1,5 +1,5 @@
 {
-  "id": "6fb28d0b-f4be-4868-a96c-c1f43bd39229",
+  "id": "c6ccdf1c-a939-46df-aebb-668a59f66c44",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -396,15 +396,27 @@
         },
         "amount": {
           "name": "amount",
-          "type": "text",
+          "type": "numeric(15, 2)",
           "primaryKey": false,
           "notNull": true
+        },
+        "paid_amount": {
+          "name": "paid_amount",
+          "type": "numeric(15, 2)",
+          "primaryKey": false,
+          "notNull": false
         },
         "authorId": {
           "name": "authorId",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         },
         "note": {
           "name": "note",
@@ -472,6 +484,19 @@
           "tableTo": "users",
           "columnsFrom": [
             "authorId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "transactions_parent_id_transactions_id_fk": {
+          "name": "transactions_parent_id_transactions_id_fk",
+          "tableFrom": "transactions",
+          "tableTo": "transactions",
+          "columnsFrom": [
+            "parent_id"
           ],
           "columnsTo": [
             "id"
@@ -568,7 +593,7 @@
       "schema": "public",
       "values": [
         "pending",
-        "canceled",
+        "cancelled",
         "accepted"
       ]
     },

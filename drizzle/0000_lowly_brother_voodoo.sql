@@ -1,4 +1,4 @@
-CREATE TYPE "public"."invitation_status" AS ENUM('pending', 'canceled', 'accepted');--> statement-breakpoint
+CREATE TYPE "public"."invitation_status" AS ENUM('pending', 'cancelled', 'accepted');--> statement-breakpoint
 CREATE TYPE "public"."loan_book_role" AS ENUM('owner', 'member');--> statement-breakpoint
 CREATE TABLE "invitations" (
 	"id" serial PRIMARY KEY NOT NULL,
@@ -28,8 +28,10 @@ CREATE TABLE "transactions" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"loan_book_id" integer NOT NULL,
 	"type" text NOT NULL,
-	"amount" text NOT NULL,
+	"amount" numeric(15, 2) NOT NULL,
+	"paid_amount" numeric(15, 2),
 	"authorId" integer NOT NULL,
+	"parent_id" integer,
 	"note" text,
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
@@ -50,6 +52,7 @@ ALTER TABLE "loan_book_members" ADD CONSTRAINT "loan_book_members_user_id_users_
 ALTER TABLE "loan_book_members" ADD CONSTRAINT "loan_book_members_loan_book_id_loan_books_id_fk" FOREIGN KEY ("loan_book_id") REFERENCES "public"."loan_books"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "transactions" ADD CONSTRAINT "transactions_loan_book_id_loan_books_id_fk" FOREIGN KEY ("loan_book_id") REFERENCES "public"."loan_books"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "transactions" ADD CONSTRAINT "transactions_authorId_users_id_fk" FOREIGN KEY ("authorId") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_parent_id_transactions_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."transactions"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "invitations_loan_book_id_idx" ON "invitations" USING btree ("loan_book_id");--> statement-breakpoint
 CREATE INDEX "invitations_identifier_idx" ON "invitations" USING btree ("key");--> statement-breakpoint
 CREATE INDEX "invitations_status_idx" ON "invitations" USING btree ("status");--> statement-breakpoint
