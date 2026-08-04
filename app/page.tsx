@@ -19,7 +19,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { formatDate } from "@/lib/utils/dates";
 import { Edit2, Plus, Trash2 } from "lucide-react";
@@ -32,6 +31,9 @@ export default function Home() {
   const [txDetailsOpen, setTxDetailsOpen] = useState(false);
   const [deleteTxOpen, setDeleteTxOpen] = useState(false);
   const [loanBookOpen, setLoanBookOpen] = useState(false);
+
+
+  
 
   return (
     <div className="flex relative h-full flex-col w-full items-center justify-center bg-background font-sans">
@@ -200,7 +202,7 @@ export default function Home() {
               {new Array(19).fill(0).map((_, j) => (
                 <Card
                   key={j}
-                  className="w-full cursor-pointer rounded-lg border border-border/10 ring-0"
+                  className="w-full cursor-pointer rounded-lg border border-border/10 ring-0 relative overflow-visible"
                 >
                   <CardContent className="flex items-center justify-between p-3">
                     <h3 className="text-2xl font-extrabold text-error">
@@ -212,6 +214,13 @@ export default function Home() {
                         yesterday
                       </p>
                     </div>
+
+                    <span
+                      title="3 corrective transactions"
+                      className="absolute -top-2 -right-1 rounded-full w-6 h-6 z-1000! bg-[rgb(251,45,45)] grid place-items-center"
+                    >
+                      <span className="text-xs">3</span>
+                    </span>
                   </CardContent>
                 </Card>
               ))}
@@ -234,7 +243,7 @@ export default function Home() {
               </DialogTitle>
               <DialogDescription>Today</DialogDescription>
             </div>
-            <div>
+            <div className="hidden">
               <Button
                 size="icon"
                 className="cursor-pointer bg-transparent hover:bg-destructive/10 text-destructive"
@@ -244,7 +253,7 @@ export default function Home() {
               </Button>
             </div>
           </DialogHeader>
-          <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-4">
+          <div className="w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-4">
             <div className="flex flex-col gap-2">
               <p className="flex justify-between border-b border-dashed border-border/30 text-foreground/50">
                 <span>Reason</span>
@@ -265,6 +274,36 @@ export default function Home() {
               <p className="flex justify-between border-b border-dashed border-border/30 text-foreground/50">
                 <span>Added By</span>
                 <span className="font-mono text-secondary">Abebe K.</span>
+              </p>
+              <span className="w-full overflow-hidden text-secondary">
+                {"-".repeat(500)}
+              </span>
+              <p className="flex flex-col gap-2 border-b border-dashed border-border/30 text-foreground/50">
+                <span>Corrective Transactions</span>
+                <div className="font-mono text-secondary grow space-y-1 max-h-132 overflow-y-auto h-max rounded-md overflow-hidden p-2 ring-[1px] ring-muted-foreground/20">
+                  {new Array(16).fill(0).map((_, i) => (
+                    <Card
+                      key={i}
+                      className="h-max! w-full cursor-pointer rounded-2xl border border-border bg-card p-4 ring-0 transition-colors hover:bg-card/50"
+                      onClick={() => setLoanBookOpen(true)}
+                    >
+                      <CardContent className="flex items-center justify-between p-0">
+                        <div>
+                          <CardTitle className="font-bold flex gap-2 items-end">
+                            <span className="text-primary">+210 Birr</span>{" "}
+                            <span className="text-xs font-light! text-muted-foreground">
+                              by Abebe Kebede
+                            </span>
+                          </CardTitle>
+                          <CardDescription className="font-mono text-foreground/70"></CardDescription>
+                        </div>
+                        <span className="text-muted-foreground">
+                          27th Mar, 2026
+                        </span>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </p>
             </div>
           </div>
@@ -298,11 +337,13 @@ export default function Home() {
                   className="h-max w-full cursor-pointer rounded-2xl border border-border bg-background p-4 ring-0 transition-colors hover:bg-muted/50"
                   onClick={() => setLoanBookOpen(true)}
                 >
-                  <CardContent className="flex items-center justify-between p-0">
-                    <div>
-                      <CardTitle className="font-bold">Abebe Kebede</CardTitle>
+                  <CardContent className="flex items-center justify-between p-0 relative">
+                    <div className="max-w-3/4">
+                      <CardTitle className="text-lg font-bold text-nowrap overflow-x-auto">
+                        Ye Sira Bota
+                      </CardTitle>
                       <CardDescription className="font-mono text-foreground/70">
-                        +210 Birr loan. 27th Mar, 2026
+                        with Abebe Kebede
                       </CardDescription>
                     </div>
                     <span className="text-primary">+185.00 Birr</span>

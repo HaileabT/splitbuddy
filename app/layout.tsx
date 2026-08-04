@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { themeInitScript } from "@/lib/theme";
 import { QueryProvider } from "@/providers/query-provider";
+import { AuthProvider } from "@/context/auth/auth-provider";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -43,7 +44,9 @@ export default async function RootLayout({
       )}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {/* <template id="theme-init">
+          {themeInitScript}
+        </template> */}
       </head>
       <body
         className={
@@ -52,9 +55,11 @@ export default async function RootLayout({
       >
         <ThemeProvider>
           <QueryProvider>
-            <div className="h-full max-w-2xl w-[calc(100%-1rem)] mx-auto flex flex-col">
-              <div className="h-full w-full">{children}</div>
-            </div>
+            <AuthProvider>
+              <div className="h-full max-w-2xl w-[calc(100%-1rem)] mx-auto flex flex-col">
+                <div className="h-full w-full">{children}</div>
+              </div>
+            </AuthProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>

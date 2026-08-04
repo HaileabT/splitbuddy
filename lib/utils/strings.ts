@@ -29,13 +29,13 @@ export function getProperNumberString(val: number, decimalPoint?: number) {
 }
 
 export function addCommasToNumberString(num: string) {
-  
+
   let decimalDigits: string | undefined = undefined;
   if (num.includes(".")) {
     const parts = num.split('.')
     decimalDigits = parts[1];
     num = parts[0];
-    
+
   }
   const digits = num.length;
   let remainingDigits = digits - 3;
@@ -47,4 +47,59 @@ export function addCommasToNumberString(num: string) {
   }
 
   return decimalDigits ? num + "." + decimalDigits : num;
+}
+
+export function validateEmail(email: string) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+export const passwordCriteria = {
+  minLength: "Password must be at least 8 characters long",
+  special: "Password must contain at least one special character",
+  uppercase: "Password must contain at least one uppercase letter",
+  lowercase: "Password must contain at least one lowercase letter",
+  number: "Password must contain at least one number",
+}
+
+export function validatePassword(password: string): { pass: (keyof typeof passwordCriteria)[]; fail: (keyof typeof passwordCriteria)[] } {
+  const hasLower = /[a-z]+/;
+  const hasUpper = /[A-Z]+/;
+  const hasNumber = /[0-9]+/;
+  const hasSpecial = /[^a-zA-Z0-9]+/;
+
+  const fail = [] as (keyof typeof passwordCriteria)[];
+  const pass = [] as (keyof typeof passwordCriteria)[];
+
+  if (password.length < 8) {
+    fail.push("minLength");
+  } else {
+    pass.push("minLength");
+  }
+
+  if (!hasSpecial.test(password)) {
+    fail.push("special");
+  } else {
+    pass.push("special");
+  }
+
+  if (!hasUpper.test(password)) {
+    fail.push("uppercase");
+  } else {
+    pass.push("uppercase");
+  }
+
+  if (!hasLower.test(password)) {
+    fail.push("lowercase");
+  } else {
+    pass.push("lowercase");
+  }
+
+  if (!hasNumber.test(password)) {
+    fail.push("number");
+  } else {
+    pass.push("number");
+  }
+
+  return { pass, fail };
 }

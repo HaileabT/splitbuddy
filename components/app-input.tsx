@@ -10,18 +10,32 @@ export default function AppInput({
   label,
   boxClassName,
   placeholder,
+  onBlur,
+  onChange,
+  value,
+  required,
+  disabled,
+  onFocus,
+  error,
 }: {
   type: string;
   name: string;
   className?: string;
+  onChange?: (text: string) => void;
+  onBlur?: (text: string) => void;
+  onFocus?: () => void;
   label?: string;
   boxClassName?: string;
   placeholder: string;
+  required?: boolean;
+  value?: string;
+  disabled?: boolean;
+  error?: string;
 }) {
   return (
     <div className={cn("flex flex-col gap-1 ", boxClassName)}>
       {label && (
-        <Label htmlFor={name} className=" top-full right-0 mb-3">
+        <Label htmlFor={name} className=" top-full right-0 mb-2">
           {capitalize(label || "", true)}
         </Label>
       )}
@@ -34,7 +48,16 @@ export default function AppInput({
         name={name}
         id={name}
         placeholder={placeholder}
+        onFocus={onFocus}
+        value={value}
+        required={required}
+        disabled={disabled}
+        onChange={(e) => onChange?.(e.target.value)}
+        onBlur={(e) => onBlur?.(e.target.value)}
       />
+      {error && (
+        <p className="text-destructive text-sm self-end font-mono text-xs">{error}</p>
+      )}
     </div>
   );
 }

@@ -1,9 +1,28 @@
 "use client";
 
+import AppButton from "@/components/app-button";
 import AppNav from "@/components/app-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
+import { getAuth } from "@/lib/client/supabase/auth";
+import { DoorOpen, LogOut } from "lucide-react";
+import { useState } from "react";
 
 export default function Settings() {
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const onLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      const supabase = getAuth()
+      await supabase.auth.signOut()
+      window.location.reload()
+    } catch {
+
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
   return (
     <div className="flex flex-col items-center justify-center bg-background font-sans h-full">
       <header className="bg-transparent -mt-2 z-10000! w-full mx-auto h-max fixed -top-1 ">
@@ -23,6 +42,16 @@ export default function Settings() {
               <div>
                 <p className="font-medium">Notifications</p>
               </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 rounded-xl p-4 border-destructive/30 border-[1px] bg-destructive/5">
+              <div>
+                <p className="font-medium">Exit</p>
+              </div>
+
+              <AppButton isLoading={isLoggingOut} className="bg-destructive px-4! py-2! disabled:bg-destructive/30" onClick={onLogout}>
+                <LogOut className="size-4" />
+              </AppButton>
             </div>
           </div>
         </div>
