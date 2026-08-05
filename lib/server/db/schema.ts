@@ -12,48 +12,17 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const users = pgTable(
-  "users",
-  {
-    id: serial("id").primaryKey(),
-    name: text("name").notNull(),
-    email: text("email").notNull().unique(),
-    password: text("password"),
-
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at")
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => new Date()),
-  },
-  (table) => [index("users_email_idx").on(table.email)],
-);
-
-export const userRelations = relations(users, ({many}) => {
-  return {
-    loanBooks: many(loanBookMembers, {
-      relationName: "user_loan_book_membership"
-    }),
-    transactions: many(transactions, {
-      relationName: 'transaction_author'
-    }),
-    invitations: many(invitations, {
-      relationName: 'user_invitations'
-    })
-  }
-})
-
 export const loanBooks = pgTable(
   "loan_books",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", {length: 128}),
+    name: varchar("name", { length: 128 }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => [index("loan_books_created_at_idx").on(table.createdAt), index("loan_books_name_idx").on(table.name)],
 );
 
-export const loanBookRelations = relations(loanBooks, ({many}) => {
+export const loanBookRelations = relations(loanBooks, ({ many }) => {
   return {
     members: many(loanBookMembers, {
       relationName: "loan_book_members"
@@ -73,7 +42,7 @@ export const loanBookMembers = pgTable(
   "loan_book_members",
   {
     id: serial("id").primaryKey(),
-    userId: integer("user_id").references(() => users.id).notNull(),
+    userId: text("user_id").notNull(),
     loanBookId: integer("loan_book_id").references(() => loanBooks.id).notNull(),
     role: loanBookRole("role").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -87,13 +56,8 @@ export const loanBookMembers = pgTable(
   ],
 );
 
-export const loanBookMemberRelations = relations(loanBookMembers, ({one}) => {
+export const loanBookMemberRelations = relations(loanBookMembers, ({ one }) => {
   return {
-    member: one(users, {
-      fields: [loanBookMembers.userId],
-      references: [users.id],
-      relationName: "user_loan_book_membership",
-    }),
     loanBook: one(loanBooks, {
       fields: [loanBookMembers.loanBookId],
       references: [loanBooks.id],
@@ -116,7 +80,7 @@ export const transactions = pgTable(
       precision: 15,
       scale: 2
     }),
-    authorId: integer("authorId").references(() => users.id).notNull(),
+    authorId: text("authorId").notNull(),
     parentId: integer("parent_id").references((): AnyPgColumn => transactions.id),
     note: text("note"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -130,11 +94,6 @@ export const transactions = pgTable(
 
 
 export const transactionRelations = relations(transactions, ({ one, many }) => ({
-  author: one(users, {
-    fields: [transactions.authorId],
-    references: [users.id],
-    relationName: "transaction_author",
-  }),
   loanBook: one(loanBooks, {
     fields: [transactions.loanBookId],
     references: [loanBooks.id],
@@ -159,7 +118,7 @@ export const invitations = pgTable(
   {
     id: serial("id").primaryKey(),
     loanBookId: integer("loan_book_id").references(() => loanBooks.id).notNull(),
-    invitedByUserId: integer("invited_by_user_id").references(() => users.id).notNull(),
+    invitedByUserId: text("invited_by_user_id").notNull(),
     invitedUserEmail: text("invited_user_email").notNull(),
     key: text("key").notNull(),
     status: invitationStatus(),
@@ -174,11 +133,6 @@ export const invitations = pgTable(
 );
 
 export const invitationRelations = relations(invitations, ({ one, many }) => ({
-  author: one(users, {
-    fields: [invitations.invitedByUserId],
-    references: [users.id],
-    relationName: "user_invitations",
-  }),
   loanBook: one(loanBooks, {
     fields: [invitations.loanBookId],
     references: [loanBooks.id],
@@ -186,9 +140,6 @@ export const invitationRelations = relations(invitations, ({ one, many }) => ({
   }),
 }));
 
-
-export type User = typeof users.$inferSelect;
-export type UserCreate = typeof users.$inferInsert;
 
 export type LoanBook = typeof loanBooks.$inferSelect;
 export type LoanBookCreate = typeof loanBooks.$inferInsert;

@@ -20,9 +20,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useAuth } from "@/context/auth/use-auth";
+import { booksClient } from "@/lib/client/api/books";
+import { UserBooksResponseType } from "@/lib/client/api/types";
 import { formatDate } from "@/lib/utils/dates";
 import { Edit2, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [updateBookOpen, setUpdateBookOpen] = useState(false);
@@ -31,6 +34,10 @@ export default function Home() {
   const [txDetailsOpen, setTxDetailsOpen] = useState(false);
   const [deleteTxOpen, setDeleteTxOpen] = useState(false);
   const [loanBookOpen, setLoanBookOpen] = useState(false);
+  const {user} = useAuth();
+  const {isLoading, data: books} = booksClient.useBooks({userId: user?.id || ""});
+
+ 
 
 
   
@@ -314,7 +321,7 @@ export default function Home() {
         <Card className="flex h-76 w-full flex-col justify-end rounded-4xl bg-primary-gradient p-5 md:p-10 ring-0 border border-border">
           <CardHeader className="gap-2 p-0">
             <CardTitle className="text-lg text-background">
-              Haileab Tesfaye
+              {user?.user_metadata.name || "unknown"}
             </CardTitle>
             <p className="text-4xl font-extrabold text-background">
               +216.00 ETB
@@ -331,25 +338,25 @@ export default function Home() {
           </div>
           <Card className="h-full! w-full gap-4 overflow-y-auto rounded-4xl border border-border p-4 bg-card">
             <CardContent className="w-full! flex flex-col gap-4 p-0">
-              {new Array(16).fill(0).map((_, i) => (
+              {(books && books.length > 0) ? books.map((book, i) => (
                 <Card
-                  key={i}
+                  key={book.id}
                   className="h-max w-full cursor-pointer rounded-2xl border border-border bg-background p-4 ring-0 transition-colors hover:bg-muted/50"
                   onClick={() => setLoanBookOpen(true)}
                 >
                   <CardContent className="flex items-center justify-between p-0 relative">
                     <div className="max-w-3/4">
                       <CardTitle className="text-lg font-bold text-nowrap overflow-x-auto">
-                        Ye Sira Bota
+                        {book.name}
                       </CardTitle>
                       <CardDescription className="font-mono text-foreground/70">
-                        with Abebe Kebede
+                        {book.membership.role}
                       </CardDescription>
                     </div>
-                    <span className="text-primary">+185.00 Birr</span>
+                    <span className="text-primary">+{book.name} Birr</span>
                   </CardContent>
                 </Card>
-              ))}
+              )) : <div className="w-full h-full grid place-items-center text-xl text-muted-foreground">You don't have any books yet.</div>}
             </CardContent>
           </Card>
         </div>

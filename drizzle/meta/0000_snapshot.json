@@ -1,5 +1,5 @@
 {
-  "id": "c6ccdf1c-a939-46df-aebb-668a59f66c44",
+  "id": "79132076-248d-44ba-b596-76ec99ce290c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -22,7 +22,7 @@
         },
         "invited_by_user_id": {
           "name": "invited_by_user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -128,19 +128,6 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
-        },
-        "invitations_invited_by_user_id_users_id_fk": {
-          "name": "invitations_invited_by_user_id_users_id_fk",
-          "tableFrom": "invitations",
-          "tableTo": "users",
-          "columnsFrom": [
-            "invited_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -161,7 +148,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -276,19 +263,6 @@
         }
       },
       "foreignKeys": {
-        "loan_book_members_user_id_users_id_fk": {
-          "name": "loan_book_members_user_id_users_id_fk",
-          "tableFrom": "loan_book_members",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
         "loan_book_members_loan_book_id_loan_books_id_fk": {
           "name": "loan_book_members_loan_book_id_loan_books_id_fk",
           "tableFrom": "loan_book_members",
@@ -408,7 +382,7 @@
         },
         "authorId": {
           "name": "authorId",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -478,19 +452,6 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "transactions_authorId_users_id_fk": {
-          "name": "transactions_authorId_users_id_fk",
-          "tableFrom": "transactions",
-          "tableTo": "users",
-          "columnsFrom": [
-            "authorId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
         "transactions_parent_id_transactions_id_fk": {
           "name": "transactions_parent_id_transactions_id_fk",
           "tableFrom": "transactions",
@@ -507,81 +468,6 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.users": {
-      "name": "users",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "email": {
-          "name": "email",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "password": {
-          "name": "password",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "users_email_idx": {
-          "name": "users_email_idx",
-          "columns": [
-            {
-              "expression": "email",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
-        }
-      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

@@ -1,5 +1,7 @@
 import { LoanBook } from "@/lib/server/db/schema"
 import { useMutation, useQuery } from "@tanstack/react-query"
+import { UserBooksResponseType } from "./types"
+import { ServerResponse } from "@/lib/types"
 
 const loanBookKeys = {
     many: (filters: unknown) => ["books", filters],
@@ -7,15 +9,21 @@ const loanBookKeys = {
     transactions: (id: string) => ["books", id, "transactions"]
 }
 
-function useBooks(filters: unknown) {
-return useQuery<LoanBook[]>({
-    queryKey: loanBookKeys.many(filters),
-    queryFn: async () => {
-        const res = await fetch("");
-        const books = await res.json();
-        return books as LoanBook[];
-    }
-})
+interface UseBooksFilters {
+    userId: string
+}
+function useBooks(filters: UseBooksFilters) {
+    return useQuery<UserBooksResponseType[]>({
+        queryKey: loanBookKeys.many(filters),
+        queryFn: async () => {
+            const res = await fetch("/api/books");
+            const resJson = (await res.json()) as ServerResponse<UserBooksResponseType[]>;
+            if (resJson.status === "failed") {
+                throw new Error(resJson.message);
+            }
+            return resJson.data || [];
+        }
+    })
 }
 
 function useBook(id: string) {
@@ -68,4 +76,4 @@ function useDeleteBook(id: string) {
 }
 
 
-export const booksClient = {useBooks, useBook, useCreateBook, useUpdateBook, useDeleteBook, useBookTransactions}
+export const booksClient = { useBooks, useBook, useCreateBook, useUpdateBook, useDeleteBook, useBookTransactions }
