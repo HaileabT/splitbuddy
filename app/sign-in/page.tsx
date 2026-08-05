@@ -11,12 +11,18 @@ import { useState } from "react";
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")
+  const [passHidden, setPassHiden] = useState(true);
   const [requestError, setRequestError] = useState("");
   const supabase = getAuth();
 
   const searchParams = useSearchParams();
   const redirect_to = searchParams.get("redirect_to");
   const [isLoading, setIsLoading] = useState(false);
+
+  const togglePasswordInputType = () => {
+    setPassHiden((prev) => !prev);
+  }
+
   const onSubmit = async () => {
     setRequestError("")
     setIsLoading(true);
@@ -24,14 +30,14 @@ export default function SignIn() {
       email: email,
       password,
     });
-    if (error){
+    if (error) {
       console.log(error)
       setRequestError(error.message || String(error))
-    } 
-    else{
-      if(redirect_to){
+    }
+    else {
+      if (redirect_to) {
         window.location.href = redirect_to;
-      }else{
+      } else {
         window.location.href = "/";
       }
     }
@@ -49,22 +55,25 @@ export default function SignIn() {
       }
     >
       <div className=" flex flex-col gap-6">
-            {requestError && <p className="text-destructive text-sm text-center">{String(requestError)}</p>}
-        <AppInput 
-        type="text" 
-        name="email" 
-        label="email"
-        placeholder="abebe@gmail.com" 
-        onChange={setEmail}
+        {requestError && <p className="text-destructive text-sm text-center">{String(requestError)}</p>}
+        <AppInput
+          type="text"
+          name="email"
+          label="email"
+          placeholder="abebe@gmail.com"
+          onChange={setEmail}
         // error={error}
         />
 
-          <AppInput 
-        type="text" 
-        label="password"
-        name="password" 
-        placeholder="password" 
-        onChange={setPassword}
+        <AppInput
+          type={passHidden ? "password" : "text"}
+          hide={passHidden}
+          showHiddenToggle={true}
+          onShowHiddenToggleClick={togglePasswordInputType}
+          label="password"
+          name="password"
+          placeholder="password"
+          onChange={setPassword}
         // error={error}
         />
       </div>

@@ -2,10 +2,11 @@ import { createServerClient } from "@supabase/ssr";
 import { serverEnv } from "../env";
 import { cookies } from "next/headers";
 
+
 export const getServerAuth = async () => {
   const cookieStore = await cookies();
 
-  return createServerClient(
+  const supabaseServer = createServerClient(
     serverEnv.supabaseUrl,
     serverEnv.supabaseKey,
     {
@@ -19,10 +20,12 @@ export const getServerAuth = async () => {
               cookieStore.set(name, value, options);
             });
           } catch {
-            // Called from Server Component. Middleware should handle refresh.
+
           }
         },
       },
     },
   );
+
+  return supabaseServer;
 };

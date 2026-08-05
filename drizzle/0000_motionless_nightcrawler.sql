@@ -1,9 +1,16 @@
 CREATE TYPE "public"."invitation_status" AS ENUM('pending', 'cancelled', 'accepted');--> statement-breakpoint
 CREATE TYPE "public"."loan_book_role" AS ENUM('owner', 'member');--> statement-breakpoint
+CREATE TABLE "accounts" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"name" text,
+	"email" text,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "invitations" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"loan_book_id" integer NOT NULL,
-	"invited_by_user_id" text NOT NULL,
+	"invited_by_user_id" integer NOT NULL,
 	"invited_user_email" text NOT NULL,
 	"key" text NOT NULL,
 	"status" "invitation_status",
@@ -12,7 +19,7 @@ CREATE TABLE "invitations" (
 --> statement-breakpoint
 CREATE TABLE "loan_book_members" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"user_id" text NOT NULL,
+	"user_id" integer NOT NULL,
 	"loan_book_id" integer NOT NULL,
 	"role" "loan_book_role" NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL
@@ -30,16 +37,19 @@ CREATE TABLE "transactions" (
 	"type" text NOT NULL,
 	"amount" numeric(15, 2) NOT NULL,
 	"paid_amount" numeric(15, 2),
-	"authorId" text NOT NULL,
+	"authorId" integer NOT NULL,
 	"parent_id" integer,
 	"note" text,
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "invitations" ADD CONSTRAINT "invitations_loan_book_id_loan_books_id_fk" FOREIGN KEY ("loan_book_id") REFERENCES "public"."loan_books"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "loan_book_members" ADD CONSTRAINT "loan_book_members_loan_book_id_loan_books_id_fk" FOREIGN KEY ("loan_book_id") REFERENCES "public"."loan_books"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "transactions" ADD CONSTRAINT "transactions_loan_book_id_loan_books_id_fk" FOREIGN KEY ("loan_book_id") REFERENCES "public"."loan_books"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "transactions" ADD CONSTRAINT "transactions_parent_id_transactions_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."transactions"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "invitations" ADD CONSTRAINT "invitations_loan_book_id_loan_books_id_fk" FOREIGN KEY ("loan_book_id") REFERENCES "public"."loan_books"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "invitations" ADD CONSTRAINT "invitations_invited_by_user_id_accounts_id_fk" FOREIGN KEY ("invited_by_user_id") REFERENCES "public"."accounts"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "loan_book_members" ADD CONSTRAINT "loan_book_members_user_id_accounts_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."accounts"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "loan_book_members" ADD CONSTRAINT "loan_book_members_loan_book_id_loan_books_id_fk" FOREIGN KEY ("loan_book_id") REFERENCES "public"."loan_books"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_loan_book_id_loan_books_id_fk" FOREIGN KEY ("loan_book_id") REFERENCES "public"."loan_books"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_authorId_accounts_id_fk" FOREIGN KEY ("authorId") REFERENCES "public"."accounts"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_parent_id_transactions_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."transactions"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 CREATE INDEX "invitations_loan_book_id_idx" ON "invitations" USING btree ("loan_book_id");--> statement-breakpoint
 CREATE INDEX "invitations_identifier_idx" ON "invitations" USING btree ("key");--> statement-breakpoint
 CREATE INDEX "invitations_status_idx" ON "invitations" USING btree ("status");--> statement-breakpoint

@@ -42,8 +42,8 @@ export const loanBookMembers = pgTable(
   "loan_book_members",
   {
     id: serial("id").primaryKey(),
-    userId: text("user_id").notNull(),
-    loanBookId: integer("loan_book_id").references(() => loanBooks.id).notNull(),
+    userId: integer("user_id").references(() => accounts.id, { onDelete: "cascade", onUpdate: "cascade" }).notNull(),
+    loanBookId: integer("loan_book_id").references(() => loanBooks.id, { onDelete: "cascade", onUpdate: "cascade" }).notNull(),
     role: loanBookRole("role").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
@@ -58,6 +58,11 @@ export const loanBookMembers = pgTable(
 
 export const loanBookMemberRelations = relations(loanBookMembers, ({ one }) => {
   return {
+    member: one(accounts, {
+      fields: [loanBookMembers.userId],
+      references: [accounts.id],
+      relationName: "user_loan_books"
+    }),
     loanBook: one(loanBooks, {
       fields: [loanBookMembers.loanBookId],
       references: [loanBooks.id],
@@ -70,7 +75,7 @@ export const transactions = pgTable(
   "transactions",
   {
     id: serial("id").primaryKey(),
-    loanBookId: integer("loan_book_id").references(() => loanBooks.id).notNull(),
+    loanBookId: integer("loan_book_id").references(() => loanBooks.id, { onDelete: "cascade", onUpdate: "cascade" }).notNull(),
     type: text("type").notNull(),
     amount: decimal("amount", {
       precision: 15,
@@ -80,8 +85,8 @@ export const transactions = pgTable(
       precision: 15,
       scale: 2
     }),
-    authorId: text("authorId").notNull(),
-    parentId: integer("parent_id").references((): AnyPgColumn => transactions.id),
+    authorId: integer("authorId").references(() => accounts.id, { onDelete: "cascade", onUpdate: "cascade" }).notNull(),
+    parentId: integer("parent_id").references((): AnyPgColumn => transactions.id, { onDelete: "cascade", onUpdate: "cascade" }),
     note: text("note"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
@@ -94,6 +99,11 @@ export const transactions = pgTable(
 
 
 export const transactionRelations = relations(transactions, ({ one, many }) => ({
+  author: one(accounts, {
+    fields: [transactions.authorId],
+    references: [accounts.id],
+    relationName: "author"
+  }),
   loanBook: one(loanBooks, {
     fields: [transactions.loanBookId],
     references: [loanBooks.id],
@@ -117,8 +127,8 @@ export const invitations = pgTable(
   "invitations",
   {
     id: serial("id").primaryKey(),
-    loanBookId: integer("loan_book_id").references(() => loanBooks.id).notNull(),
-    invitedByUserId: text("invited_by_user_id").notNull(),
+    loanBookId: integer("loan_book_id").references(() => loanBooks.id, { onDelete: 'cascade', onUpdate: "cascade" }).notNull(),
+    invitedByUserId: integer("invited_by_user_id").references(() => accounts.id, { onDelete: "cascade", onUpdate: "cascade" }).notNull(),
     invitedUserEmail: text("invited_user_email").notNull(),
     key: text("key").notNull(),
     status: invitationStatus(),
@@ -133,6 +143,11 @@ export const invitations = pgTable(
 );
 
 export const invitationRelations = relations(invitations, ({ one, many }) => ({
+  invitor: one(accounts, {
+    fields: [invitations.invitedByUserId],
+    references: [accounts.id],
+    relationName: "invitor"
+  }),
   loanBook: one(loanBooks, {
     fields: [invitations.loanBookId],
     references: [loanBooks.id],
@@ -140,6 +155,22 @@ export const invitationRelations = relations(invitations, ({ one, many }) => ({
   }),
 }));
 
+export const accounts = pgTable("accounts", {
+  id: serial("id").primaryKey(),
+  name: text("name"),
+  email: text("email").unique().notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+})
+
+export const accountRelations = relations(accounts, ({ many }) => ({
+  loanBooks: many(loanBookMembers),
+  invitations: many(invitations),
+  transactions: many(transactions)
+}))
+
+
+export type Account = typeof accounts.$inferSelect;
+export type AccountCreate = typeof accounts.$inferInsert;
 
 export type LoanBook = typeof loanBooks.$inferSelect;
 export type LoanBookCreate = typeof loanBooks.$inferInsert;

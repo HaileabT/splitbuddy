@@ -5,6 +5,7 @@ import AppButton from "@/components/app-button";
 import AppInput from "@/components/app-input";
 import { useAuth } from "@/context/auth/use-auth";
 import { getAuth } from "@/lib/client/supabase/auth";
+import { accountsClient } from "@/lib/client/api/accounts";
 
 interface UpdateNameFormProps {
   onSuccess?: () => void;
@@ -19,10 +20,29 @@ export function UpdateNameForm({ onSuccess }: UpdateNameFormProps) {
   const [requestError, setRequestError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const updateAccountMutation = accountsClient.useUpdateAccount();
+
+  const { data: account, isLoading: isAccLoading } = accountsClient.useAccountByEmail(user?.email || "")
+
   const handleSubmit = async (e: React.FormEvent) => {
+    if (isAccLoading) {
+      setRequestError("account being loaded. please try again after a few seconds");
+      return;
+    }
     e.preventDefault();
     setRequestError("");
 
+    if (!user?.id) {
+      setRequestError("please login first")
+      return;
+    }
+
+    if (!account) {
+      setRequestError("internal server error")
+      return;
+    }
+
+    const oldName = user.user_metadata.name as string || "";
     if (!name.trim() || name.trim().length < 2) {
       setNameError("Name must be at least 2 characters long");
       return;
@@ -37,6 +57,22 @@ export function UpdateNameForm({ onSuccess }: UpdateNameFormProps) {
       if (error) {
         setRequestError(error.message);
       } else {
+        try {
+          await updateAccountMutation.mutateAsync({ id: account.id, name: name.trim() });
+        } catch (error) {
+          if (error instanceof Error) {
+            setRequestError(error?.message || String(error))
+          } else {
+            setRequestError(String(error))
+          }
+
+          await supabase.auth.updateUser({
+            data: {
+              name: oldName
+            }
+          })
+        }
+
         await reloadUser();
         onSuccess?.();
       }
