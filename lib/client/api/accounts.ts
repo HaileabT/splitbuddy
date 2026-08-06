@@ -1,14 +1,26 @@
 import { Account } from "@/lib/server/db/schema"
 import { ServerResponse } from "@/lib/types";
+import { getDataFromResponseOrThrow } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query"
 
 function useAccountByEmail(email: string) {
     return useQuery<Account>({
         queryKey: ["user-by-email"],
         queryFn: async () => {
-            const res = await fetch(`/api/accounts/${encodeURIComponent(email)}`);
+            const res = await fetch(`/api/accounts/by-email/${encodeURIComponent(email)}`);
             const resJSON = (await res.json()) as ServerResponse<Account>;
             return resJSON.data as Account;
+        }
+    })
+}
+
+function useAccount(id: number) {
+    return useQuery<Account>({
+        queryKey: ["user-by-id"],
+        queryFn: async () => {
+            const res = await fetch(`/api/accounts/${id}`);
+            const resJSON = (await res.json());
+            return getDataFromResponseOrThrow<Account>(resJSON);
         }
     })
 }
@@ -55,4 +67,4 @@ function useDeleteAccount() {
 }
 
 
-export const accountsClient = { useAccountByEmail, useCreateAccount, useUpdateAccount, useDeleteAccount }
+export const accountsClient = { useAccountByEmail, useCreateAccount, useUpdateAccount, useAccount, useDeleteAccount }

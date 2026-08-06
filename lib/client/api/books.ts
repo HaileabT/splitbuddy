@@ -2,17 +2,18 @@ import { LoanBook } from "@/lib/server/db/schema"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { UserBooksResponseType } from "./types"
 import { ServerResponse } from "@/lib/types"
+import { getDataFromResponseOrThrow } from "@/lib/utils"
 
 const loanBookKeys = {
     many: (filters: unknown) => ["books", filters],
-    single: (id: string) => ["books", id],
-    transactions: (id: string) => ["books", id, "transactions"]
+    single: (id: number) => ["books", id],
+    transactions: (id: number) => ["books", id, "transactions"]
 }
 
 interface UseBooksFilters {
-    userId: string
+    userId?: number
 }
-function useBooks(filters: UseBooksFilters) {
+function useBooks(filters?: UseBooksFilters) {
     return useQuery<UserBooksResponseType[]>({
         queryKey: loanBookKeys.many(filters),
         queryFn: async () => {
@@ -26,22 +27,22 @@ function useBooks(filters: UseBooksFilters) {
     })
 }
 
-function useBook(id: string) {
+function useBook(id: number) {
     return useQuery<LoanBook>({
         queryKey: loanBookKeys.single(id),
         queryFn: async () => {
-            const res = await fetch(id);
-            const book = await res.json();
-            return book;
+            const res = await fetch(`/api/books/${id}`);
+            const resJSON = await res.json();
+            return getDataFromResponseOrThrow(resJSON);
         }
     })
 }
 
-function useBookTransactions(id: string) {
+function useBookTransactions(id: number) {
     return useQuery<LoanBook>({
         queryKey: loanBookKeys.transactions(id),
         queryFn: async () => {
-            const res = await fetch(id);
+            const res = await fetch("");
             const book = await res.json();
             return book;
         }
@@ -51,17 +52,33 @@ function useBookTransactions(id: string) {
 function useCreateBook() {
     return useMutation({
         mutationKey: ["create-book"],
-        mutationFn: async (data: unknown) => {
+        mutationFn: async (data: { invitedUserEmail: string, name: string }) => {
+            const res = await fetch("/api/books", {
+                method: "POST",
+                body: JSON.stringify(data)
+            });
 
+            if (!res.ok) {
+                const body = await res.json();
+                throw new Error(body.message)
+            }
+            const book = await res.json();
+            return book;
         }
+
     })
 }
 
 function useUpdateBook(id: string) {
     return useMutation({
         mutationKey: ["update-book", id],
-        mutationFn: async (data: unknown) => {
-
+        mutationFn: async (data: { name?: string }) => {
+            const res = await fetch(`/api/books/${id}`, {
+                method: "PATCH",
+                body: JSON.stringify(data)
+            });
+            const book = await res.json();
+            return book;
         }
     })
 }

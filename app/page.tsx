@@ -3,6 +3,7 @@
 import AppButton from "@/components/app-button";
 import AppNav from "@/components/app-nav";
 import { UpdateBookForm } from "@/components/book-form";
+import { InvitationDetails } from "@/components/invitation-details";
 import { NewBookButton } from "@/components/new-book-btn";
 import { RecordForm } from "@/components/record-form";
 import { Button } from "@/components/ui/button";
@@ -17,36 +18,76 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth/use-auth";
 import { booksClient } from "@/lib/client/api/books";
 import { UserBooksResponseType } from "@/lib/client/api/types";
+import { LoanBook } from "@/lib/server/db/schema";
 import { formatDate } from "@/lib/utils/dates";
 import { Edit2, Plus, Trash2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Home() {
+  const searchParams = useSearchParams();
+
+  const [invitationModalOpen, setInvitationModalOpen] = useState(false)
+  const [invitedBookKey, setInvitedBookKey] = useState("");
+  const [invitedToBook, setInvitedToBook] = useState<LoanBook | null>(null)
   const [updateBookOpen, setUpdateBookOpen] = useState(false);
   const [deleteBookOpen, setDeleteBookOpen] = useState(false);
   const [createTxOpen, setCreateTxOpen] = useState(false);
   const [txDetailsOpen, setTxDetailsOpen] = useState(false);
   const [deleteTxOpen, setDeleteTxOpen] = useState(false);
   const [loanBookOpen, setLoanBookOpen] = useState(false);
-  const {user} = useAuth();
-  const {isLoading, data: books} = booksClient.useBooks({userId: user?.id || ""});
-
- 
+  const { user, account } = useAuth();
+  const { isLoading, data: books } = booksClient.useBooks({ userId: account?.id || 0 });
 
 
-  
+
+  useEffect(() => {
+
+    let invitedTo = searchParams.get("invited_to") || "";
+    invitedTo = invitedTo.trim();
+
+    if (invitedTo.length > 0) {
+      setInvitedBookKey(decodeURIComponent(invitedTo))
+      setInvitationModalOpen(true)
+    }
+  }, [searchParams])
+
+
+
 
   return (
     <div className="flex relative h-full flex-col w-full items-center justify-center bg-background font-sans">
       <header className="bg-transparent -mt-2 z-10000! w-full mx-auto h-max fixed -top-1 ">
         <AppNav />
       </header>
+
+      <Dialog open={invitationModalOpen} onOpenChange={setInvitationModalOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="z-100 max-w-xl rounded-4xl border border-border bg-card p-6 sm:max-w-xl"
+        >
+          <DialogHeader className="border-b border-border/10">
+            <DialogTitle className="text-lg font-bold">
+              You have an invitaiton
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              Please choose to accept or decline it
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 py-2">
+            <InvitationDetails invKey={invitedBookKey} />
+          </div>
+        </DialogContent>
+
+      </Dialog>
+
       <Dialog open={createTxOpen} onOpenChange={setCreateTxOpen}>
         <DialogContent
           showCloseButton={false}

@@ -29,3 +29,11 @@ export function formatSuccessRespnse<T = any>(code: number, message: string, res
 
   return res;
 }
+
+export function getDataFromResponseOrThrow<T = any>(data: ServerResponse<T>) {
+  if (data.status !== "success") {
+    throw new Error(data.message);
+  }
+
+  return data.data as T;
+}

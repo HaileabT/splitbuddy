@@ -35,6 +35,8 @@ export default function SignUp() {
 
   const searchParams = useSearchParams();
   const redirect_to = searchParams.get("redirect_to");
+
+  console.log(redirect_to)
   const [isLoading, setIsLoading] = useState(false);
 
   const createAccountMutation = accountsClient.useCreateAccount();
@@ -66,14 +68,18 @@ export default function SignUp() {
     const { error, data } = await supabase.auth.signUp({
       email: email,
       password: password,
+
       options: {
+
         data: {
           name: name,
         },
-        emailRedirectTo: redirect_to || undefined,
+        emailRedirectTo: decodeURIComponent(redirect_to || ""),
+
       },
 
     });
+
 
     console.log(data)
     if (error) {
