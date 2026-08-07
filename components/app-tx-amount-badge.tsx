@@ -9,7 +9,7 @@ interface AppTxAmountBadgeProps {
 export function AppTxAmountBadge({ amount, role, className = "" }: AppTxAmountBadgeProps) {
     if (typeof amount === "string"
     ) {
-        amount.replaceAll(",", "")
+        amount = amount.replaceAll(",", "")
     }
     const amtNum = Number(amount || "0");
     const isOwner = role === "owner";
