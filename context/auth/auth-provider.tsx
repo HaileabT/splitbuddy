@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(session.session.user);
       } else {
         if (!PUBLIC_PATHS.some((path) => window.location.pathname === path || (path !== "/" && window.location.pathname.startsWith(path)))) {
-          router.push("/");
+          router.push("/landing");
         }
       }
       setIsLoading(false);
@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session.session.user);
     } else {
       if (!PUBLIC_PATHS.some((path) => window.location.pathname === path || (path !== "/" && window.location.pathname.startsWith(path)))) {
-        router.push("/");
+        router.push("/landing");
       }
     }
   };
@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return <div className="w-full h-full grid place-items-center bg-background!"><Loader2 className="animate-spin" /></div>;
   }
 
-  if (!account || !user) {
+  if (!account && !user) {
     return <div className="w-full h-full grid place-items-center bg-background!"><Loader2 className="animate-spin" /></div>
   }
 
