@@ -36,18 +36,14 @@ export async function POST(req: NextRequest) {
 
     const currentUser = sessionRes.data.session?.user;
 
-    if (!currentUser) {
-        if (!body.id || !body.email) {
-            return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
-        }
-        const authUser = await supabase.auth.admin.getUserById(body.id);
-        if (!authUser.data?.user || authUser.data.user.email?.toLowerCase() !== body.email.toLowerCase()) {
-            return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
-        }
-    } else {
+    if (currentUser) {
         if (currentUser.email?.toLowerCase() !== body.email?.toLowerCase() && currentUser.role !== "admin") {
             return NextResponse.json(formatErrorRespnse(403, "forbidden"), { status: 403 });
         }
+    }
+
+    if (!body.name || !body.email) {
+        return NextResponse.json(formatErrorRespnse(400, "name and email are required"), { status: 400 });
     }
 
     try {
@@ -61,11 +57,6 @@ export async function POST(req: NextRequest) {
         if (error instanceof ApiError) {
             errMsg = error.message;
             status = error.code;
-        }
-
-        const id = body.id;
-        if (id) {
-            await supabase.auth.admin.deleteUser(id);
         }
 
         return NextResponse.json(formatErrorRespnse(status, errMsg), {
