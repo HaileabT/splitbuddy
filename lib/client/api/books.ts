@@ -3,6 +3,7 @@ import { ServerResponse } from "@/lib/types";
 import { getDataFromResponseOrThrow } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserBooksResponseType } from "./types";
+import { accountKeys } from "./accounts";
 
 export const loanBookKeys = {
     many: (filters?: unknown) => ["books", filters || {}],
@@ -127,6 +128,7 @@ function useDeleteBook() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: loanBookKeys.many() });
+            queryClient.invalidateQueries({queryKey: accountKeys.byEmail("this")})
         },
     });
 }
