@@ -57,10 +57,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return <div className="w-full h-full grid place-items-center bg-background!"><Loader2 className="animate-spin" /></div>;
   }
 
-  if (!account && !user) {
-    return <div className="w-full h-full grid place-items-center bg-background!"><Loader2 className="animate-spin" /></div>
-  }
-
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, reloadUser, account: account || null, reloadAccount }}>
