@@ -25,37 +25,37 @@ import { UserBooksResponseType } from "@/lib/client/api/types";
 import { formatDate } from "@/lib/utils/dates";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import LandingPage from "./landing/page";
 
 export default function Home() {
   const searchParams = useSearchParams();
 
-  const [invitationModalOpen, setInvitationModalOpen] = useState(false)
+  const [invitationModalOpen, setInvitationModalOpen] = useState(false);
   const [invitedBookKey, setInvitedBookKey] = useState("");
   const [loanBookOpen, setLoanBookOpen] = useState(false);
-  const { user, account, reloadAccount } = useAuth();
+  const { user, isAuthenticated, account, reloadAccount } = useAuth();
   const { isLoading, data: books } = booksClient.useBooks({ userId: account?.id || 0 });
-  const [openBook, setOpenBook] = useState<UserBooksResponseType | null>(null)
-
-
+  const [openBook, setOpenBook] = useState<UserBooksResponseType | null>(null);
 
   useEffect(() => {
-
     let invitedTo = searchParams.get("invited_to") || "";
     invitedTo = invitedTo.trim();
 
     if (invitedTo.length > 0) {
-      setInvitedBookKey(decodeURIComponent(invitedTo))
-      setInvitationModalOpen(true)
+      setInvitedBookKey(decodeURIComponent(invitedTo));
+      setInvitationModalOpen(true);
     }
-  }, [searchParams])
-
+  }, [searchParams]);
 
   const onInvitationActionDecided = () => {
     setInvitationModalOpen(false);
     setInvitedBookKey("");
-    window.location.replace("/")
-  }
+    window.location.replace("/");
+  };
 
+  if (!isAuthenticated) {
+    return <LandingPage />;
+  }
 
   return (
     <div className="flex relative h-full flex-col w-full items-center justify-center bg-background font-sans">
@@ -111,7 +111,7 @@ export default function Home() {
                 <Card
                   key={book.id}
                   className="h-max w-full cursor-pointer rounded-2xl border border-border bg-background p-4 ring-0 transition-colors hover:bg-muted/50"
-                  onClick={() => { setOpenBook(book); setLoanBookOpen(true) }}
+                  onClick={() => { setOpenBook(book); setLoanBookOpen(true); }}
                 >
                   <CardContent className="flex items-center justify-between p-0 relative">
                     <div className="max-w-3/4">
