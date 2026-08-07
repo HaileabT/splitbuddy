@@ -37,7 +37,6 @@ export async function POST(req: NextRequest) {
     const currentUser = sessionRes.data.session?.user;
 
     if (!currentUser) {
-        // Unauthenticated session (e.g. during new user signup before session cookie is established)
         if (!body.id || !body.email) {
             return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
         }
