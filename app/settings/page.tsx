@@ -17,6 +17,7 @@ import { useAuth } from "@/context/auth/use-auth";
 import { getAuth } from "@/lib/client/supabase/auth";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
+import { LazyText } from "@/components/lazy-text";
 
 export default function Settings() {
   const { user } = useAuth();
@@ -80,11 +81,9 @@ export default function Settings() {
               <div className="flex items-center justify-between gap-4 border border-foreground/10 rounded-xl p-4">
                 <div>
                   <p className="font-medium">Name</p>
-                  {user?.user_metadata?.name && (
-                    <p className="text-sm text-muted-foreground font-mono">
-                      {user.user_metadata.name}
-                    </p>
-                  )}
+                  <p className="text-sm text-muted-foreground font-mono">
+                    <LazyText isLoading={!user} text={user?.user_metadata?.name} fallback="User" className="w-28 h-4" />
+                  </p>
                 </div>
                 <AppButton onClick={() => setIsNameModalOpen(true)}>Update</AppButton>
               </div>

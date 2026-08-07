@@ -27,6 +27,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import LandingPage from "./landing/page";
 import { Loader2 } from "lucide-react";
+import { LazyText } from "@/components/lazy-text";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -91,11 +92,11 @@ export default function Home() {
         <Card className="flex h-76 w-full flex-col justify-end rounded-4xl bg-primary-gradient p-5 md:p-10 ring-0 border border-border">
           <CardHeader className="gap-2 p-0">
             <CardTitle className="text-lg text-background">
-              {user?.user_metadata.name || "unknown"}
+              <LazyText isLoading={!user} text={user?.user_metadata?.name} fallback="User" loadingClassName="w-32 h-5 bg-background/30" />
             </CardTitle>
-            <p className="text-4xl font-extrabold text-background">
-              {account?.amount?.toFixed(2) || 0.00} ETB
-            </p>
+            <div className="text-4xl font-extrabold text-background">
+              <LazyText isLoading={!account} text={`${account?.amount?.toFixed(2) ?? "0.00"} ETB`} fallback="0.00 ETB" loadingClassName="w-48 h-9 bg-background/30" />
+            </div>
             <CardDescription className="text-xs font-light text-card">
               {formatDate(new Date())}
             </CardDescription>

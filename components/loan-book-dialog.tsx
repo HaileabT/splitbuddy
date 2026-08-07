@@ -71,13 +71,19 @@ export function LoanBookDialog({ open, onOpenChange, book, onUpdate }: LoanBookD
                     <div>
                         <DialogTitle className="text-sm font-light">
                             {<LazyText className="text-lg sm:text-xl font-bold!" isLoading={isBookLoading} text={bookReloaded?.name} fallback={""} failed={isBookFailed} />} {"with "}
-                            {(members && members.length > 0) && <LazyText isLoading={isMembersLoading} text={members[1]?.user.name} fallback={""} failed={isMembersFailed} />}
+                            <LazyText isLoading={isMembersLoading} text={members?.find((m) => m.userId !== account?.id)?.user.name || members?.[1]?.user.name || members?.[0]?.user.name} fallback="" failed={isMembersFailed} />
                         </DialogTitle>
                         <DialogDescription>
                             {isBookPositive ? "Member owes you " : "You owe members "}
-                            <span className={`font-bold ${isBookPositive ? "text-success" : "text-destructive"}`}>
-                                {userBookAmt} Birr
-                            </span>
+                            <LazyText
+                                isLoading={isBookLoading}
+                                text={
+                                    <span className={`font-bold ${isBookPositive ? "text-success" : "text-destructive"}`}>
+                                        {userBookAmt} Birr
+                                    </span>
+                                }
+                                className="w-16 h-4"
+                            />
                         </DialogDescription>
                     </div>
                     <div className="flex gap-1.5 sm:gap-2">
