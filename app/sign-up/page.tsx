@@ -185,7 +185,10 @@ export default function SignUp() {
           <PasswordStrengthIndicator password={password} />
         </div>}
         <AppInput
-          type="text"
+          type={passHidden ? "password" : "text"}
+          hide={passHidden}
+          showHiddenToggle
+          onShowHiddenToggleClick={togglePasswordInputType}
           name="confirm-password"
           label="confirm password"
           placeholder="••••••••"
