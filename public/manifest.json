@@ -1,0 +1,21 @@
+{
+  "name": "SplitBuddy",
+  "short_name": "SplitBuddy",
+  "description": "Track shared expenses, manage loan books, and keep financial balances crystal clear between friends effortlessly.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090d0b",
+  "theme_color": "#10b981",
+  "icons": [
+    {
+      "src": "/favicon_io/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon_io/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

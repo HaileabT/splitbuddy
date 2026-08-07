@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LogIn, UserPlus, Sparkles } from "lucide-react";
+import { LogIn, UserPlus } from "lucide-react";
 
 export default function LandingPage() {
   return (

@@ -21,9 +21,54 @@ const robotoMono = Roboto_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://splitbuddy.haileabtesfaye.dev";
+
 export const metadata: Metadata = {
-  title: "SplitBuddy",
-  description: "Track and split transactions effortlessly",
+  metadataBase: new URL(siteUrl),
+  manifest: "/manifest.json",
+  title: {
+    default: "SplitBuddy - Track Shared Expenses & Loan Books",
+    template: "%s | SplitBuddy",
+  },
+  description: "Track shared expenses, manage loan books, and keep financial balances crystal clear between friends effortlessly.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon_io/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon_io/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [
+      { url: "/favicon_io/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      {
+        rel: "manifest",
+        url: "/favicon_io/site.webmanifest",
+      },
+    ],
+  },
+  openGraph: {
+    title: "SplitBuddy - Track Shared Expenses & Loan Books",
+    description: "Track shared expenses, manage loan books, and keep financial balances crystal clear between friends effortlessly.",
+    url: siteUrl,
+    siteName: "SplitBuddy",
+    images: [
+      {
+        url: "/link-preview.png",
+        width: 1200,
+        height: 630,
+        alt: "SplitBuddy Link Preview",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SplitBuddy - Track Shared Expenses & Loan Books",
+    description: "Track shared expenses, manage loan books, and keep financial balances crystal clear between friends effortlessly.",
+    images: ["/link-preview.png"],
+  },
 };
 
 export default async function RootLayout({
