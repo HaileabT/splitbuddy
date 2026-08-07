@@ -3,7 +3,7 @@
 import AppButton from "@/components/app-button";
 import AppNav from "@/components/app-nav";
 import { UpdateBookForm } from "@/components/book-form";
-import { InvitationDetails } from "@/components/invitation-details";
+import { InvitationPrompt } from "@/components/invitation-prompt";
 import { NewBookButton } from "@/components/new-book-btn";
 import { RecordForm } from "@/components/record-form";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth/use-auth";
@@ -60,6 +61,11 @@ export default function Home() {
   }, [searchParams])
 
 
+  const onInvitationActionDecided = () => {
+    setInvitationModalOpen(false);
+    setInvitedBookKey("");
+    window.location.replace("/")
+  }
 
 
   return (
@@ -82,10 +88,11 @@ export default function Home() {
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 py-2">
-            <InvitationDetails invKey={invitedBookKey} />
+            <InvitationPrompt invKey={invitedBookKey} onDecided={onInvitationActionDecided} />
           </div>
         </DialogContent>
 
+        <DialogOverlay className="backdrop-blur-2xl" />
       </Dialog>
 
       <Dialog open={createTxOpen} onOpenChange={setCreateTxOpen}>

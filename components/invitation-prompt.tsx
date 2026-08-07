@@ -3,22 +3,46 @@
 import { accountsClient } from "@/lib/client/api/accounts"
 import { booksClient } from "@/lib/client/api/books"
 import { invitationsClient } from "@/lib/client/api/invitations"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import AppButton from "./app-button"
 import { LazyText } from "./lazy-text"
 
-interface InvitationDetailsProps {
-    invKey: string
+interface InvitationPromptProps {
+    invKey: string,
+    onDecided?: () => void;
 }
 
-export function InvitationDetails({ invKey }: InvitationDetailsProps) {
+export function InvitationPrompt({ invKey, onDecided }: InvitationPromptProps) {
     const { data: invitation, isLoading: isInvitationLoading } = invitationsClient.useInvitationByKey(invKey);
     const { data: book, refetch: refreshBook, isLoading: isBookLoading } = booksClient.useBook(invitation?.loanBookId || 0)
     const { data: invitor, refetch: refreshInvitor, isLoading: isInvitorLoading } = accountsClient.useAccount(invitation?.invitedByUserId || 0)
+    const acceptInvitationMutation = invitationsClient.useAcceptInvitation(invKey);
+    const cancelInvitationMutation = invitationsClient.useCancelInvitation(invKey);
+    const isCancelLoading = cancelInvitationMutation.isPending;
+    const isAcceptLoading = acceptInvitationMutation.isPending;
+
+    const onAccept = async () => {
+        await acceptInvitationMutation.mutateAsync();
+
+        onDecided?.();
+    }
+
+    const onCancel = async () => {
+        await cancelInvitationMutation.mutateAsync();
+
+        onDecided?.()
+    }
 
     useEffect(() => {
-        refreshBook()
-        refreshInvitor();
+        if (invitation) {
+            if (invitation.status !== "pending") {
+                onDecided?.();
+                return;
+            }
+            refreshBook()
+            refreshInvitor();
+        }
+
     }, [invitation])
 
     return <div className="flex flex-col gap-4 bg-card">
@@ -27,8 +51,8 @@ export function InvitationDetails({ invKey }: InvitationDetailsProps) {
         </div>
 
         <div className="self-end flex gap-4">
-            <AppButton>Yes</AppButton>
-            <AppButton className="bg-destructive hover:bg-destructive/70">Nah</AppButton>
+            <AppButton onClick={onAccept} isLoading={isAcceptLoading} disabled={isAcceptLoading || isCancelLoading}>Yes</AppButton>
+            <AppButton onClick={onCancel} isLoading={isCancelLoading} disabled={isAcceptLoading || isCancelLoading} className="bg-destructive hover:bg-destructive/70">Nah</AppButton>
         </div>
     </div>
 }

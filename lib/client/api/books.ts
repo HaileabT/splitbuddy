@@ -4,7 +4,7 @@ import { UserBooksResponseType } from "./types"
 import { ServerResponse } from "@/lib/types"
 import { getDataFromResponseOrThrow } from "@/lib/utils"
 
-const loanBookKeys = {
+export const loanBookKeys = {
     many: (filters: unknown) => ["books", filters],
     single: (id: number) => ["books", id],
     transactions: (id: number) => ["books", id, "transactions"]

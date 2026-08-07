@@ -1,6 +1,7 @@
 import { Invitation, LoanBook } from "@/lib/server/db/schema"
 import { ServerResponse } from "@/lib/types";
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { loanBookKeys } from "./books";
 
 const invitationKeys = {
     many: (filters: unknown) => ["invitation", filters],
@@ -45,25 +46,35 @@ function useInvitationByBook(bookId: string) {
 
 
 
-function useAcceptInvitation(id: string) {
+function useAcceptInvitation(key: string) {
+    const queryClient = useQueryClient();
     return useMutation({
-        mutationKey: ["cancel-invitation", id],
-        mutationFn: async (data: unknown) => {
-
+        mutationKey: ["accept-invitation", key],
+        mutationFn: async () => {
+            const res = await fetch(`/api/invitations/by-key/accept`, { method: "POST", body: JSON.stringify({ key }) });
+            const resJSON = (await res.json()) as ServerResponse<Invitation>;
+            return resJSON.data as Invitation;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: loanBookKeys.many({})
+            })
         }
     })
 }
 
 
-function useCancelInvitation(id: string) {
+function useCancelInvitation(key: string) {
     return useMutation({
-        mutationKey: ["cancel-invitation", id],
-        mutationFn: async (data: unknown) => {
-
+        mutationKey: ["cancel-invitation", key],
+        mutationFn: async () => {
+            const res = await fetch(`/api/invitations/by-key/cancel`, { method: "POST", body: JSON.stringify({ key }) });
+            const resJSON = (await res.json()) as ServerResponse<Invitation>;
+            return resJSON.data as Invitation;
         }
     })
 }
 
 
 
-export const invitationsClient = { useInvitation, useInvitationByKey, useCancelInvitation, useInvitationByBook }
+export const invitationsClient = { useInvitation, useInvitationByKey, useCancelInvitation, useAcceptInvitation, useInvitationByBook }

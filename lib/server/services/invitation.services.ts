@@ -3,6 +3,7 @@ import { accountsRepo, booksRepo, invitationsRepo, membersRepo } from "../db/rep
 import { ApiError } from "../error";
 import { sendInvitationEmail } from "../resend/senders";
 import { getServerAuth } from "../supabase/auth";
+import { accountServices } from "./accounts.services";
 
 async function create(
   loanBookId: number,
@@ -98,7 +99,6 @@ async function accept(key: string, acceptingUserId: number) {
     throw new ApiError("User account not found", 404);
   }
 
-  // Check if user is already a member
   const existingMember = await membersRepo.getMember(invitation.loanBookId, acceptingUserId);
   if (!existingMember) {
     await membersRepo.create({
@@ -111,18 +111,19 @@ async function accept(key: string, acceptingUserId: number) {
   return await invitationsRepo.update(invitation.id, { status: "accepted" });
 }
 
-async function cancel(id: number, requestingUserId: number) {
-  const invitation = await invitationsRepo.get(id);
+async function cancel(key: string, requestingUserId: number) {
+  const invitation = await invitationsRepo.getByKey(key);
   if (!invitation) {
     throw new ApiError("Invitation not found", 404);
   }
 
-  const membership = await membersRepo.getMember(invitation.loanBookId, requestingUserId);
-  if (!membership || (invitation.invitedByUserId !== requestingUserId && membership.role !== "owner")) {
+  const account = await accountServices.getById(requestingUserId)
+
+  if (!account || account.email !== invitation.invitedUserEmail) {
     throw new ApiError("You do not have permission to cancel this invitation", 403);
   }
 
-  return await invitationsRepo.update(id, { status: "cancelled" });
+  return await invitationsRepo.update(invitation.id, { status: "cancelled" });
 }
 
 async function getMany(filters?: {

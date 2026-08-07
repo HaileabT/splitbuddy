@@ -1,7 +1,6 @@
 import { accountsRepo } from "@/lib/server/db/repos";
 import { invitationServices } from "@/lib/server/services";
 import { getServerAuth } from "@/lib/server/supabase/auth";
-import { formatErrorRespnse } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ key: string }> }) {
