@@ -26,6 +26,7 @@ import { formatDate } from "@/lib/utils/dates";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import LandingPage from "./landing/page";
+import { Loader2 } from "lucide-react";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -107,7 +108,7 @@ export default function Home() {
           </div>
           <Card className="h-full! w-full gap-4 overflow-y-auto rounded-4xl border border-border p-4 bg-card">
             <CardContent className="w-full! flex flex-col gap-4 p-0">
-              {(books && books.length > 0) ? books.map((book, i) => (
+              {isLoading ? <div className="w-full h-full grid place-items-center text-xl text-muted-foreground"><Loader2 className="animate-spin" /></div> : (books && books.length > 0) ? books.map((book, i) => (
                 <Card
                   key={book.id}
                   className="h-max w-full cursor-pointer rounded-2xl border border-border bg-background p-4 ring-0 transition-colors hover:bg-muted/50"

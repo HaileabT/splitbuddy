@@ -14,7 +14,6 @@ export const getAuth = (): SupabaseClient => {
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
       {
         isSingleton: true,
-
         auth: {
           persistSession: true,
           detectSessionInUrl: true,
