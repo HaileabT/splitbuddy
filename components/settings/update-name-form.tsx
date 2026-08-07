@@ -31,6 +31,7 @@ export function UpdateNameForm({ onSuccess }: UpdateNameFormProps) {
     }
     e.preventDefault();
     setRequestError("");
+    setNameError("");
 
     if (!user?.id) {
       setRequestError("please login first")
@@ -98,11 +99,6 @@ export function UpdateNameForm({ onSuccess }: UpdateNameFormProps) {
           setName(text);
           if (text.trim().length >= 2) {
             setNameError("");
-          }
-        }}
-        onBlur={(text) => {
-          if (!text.trim() || text.trim().length < 2) {
-            setNameError("Name must be at least 2 characters long");
           }
         }}
         error={nameError}

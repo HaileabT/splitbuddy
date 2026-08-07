@@ -123,11 +123,11 @@ export function LoanBookDialog({ open, onOpenChange, book, onUpdate }: LoanBookD
                                     onClick={() => { setTransactionOpen(t); setTxDetailsOpen(true) }}
                                 >
                                     <CardContent className="flex items-center justify-between p-3">
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex flex-col items-center gap-1">
+                                            <AppTxAmountBadge amount={t.amount} role={book.membership.role} />
                                             <h3 className="text-2xl font-extrabold text-foreground">
                                                 {absAmt} Birr
                                             </h3>
-                                            <AppTxAmountBadge amount={t.amount} role={book.membership.role} />
                                         </div>
                                         <div>
                                             <p>by <Signiture userId={t.authorId} showOwnIndicator thisAccount={account || undefined} /></p>

@@ -34,18 +34,24 @@ export function BookForm({ onSuccess }: { onSuccess?: () => void }) {
 
   const onSubmit = async () => {
     setRequestError("");
+    setBookNameError("");
+    setEmailError("");
     setCreatedLink(null);
     setCopied(false);
 
-    if (!validateEmail(invitedUserEmail)) {
-      setEmailError("invalid email");
-      return;
+    let hasError = false;
+
+    if (!bookName || bookName.trim().length < 2) {
+      setBookNameError("name should be at least 2 nonspace characters long");
+      hasError = true;
     }
 
-    if (bookName?.trim().length < 1) {
-      setBookNameError("invalid name");
-      return;
+    if (!validateEmail(invitedUserEmail)) {
+      setEmailError("invalid email");
+      hasError = true;
     }
+
+    if (hasError) return;
 
     try {
       const res = await createBookMutation.mutateAsync({ invitedUserEmail, name: bookName });
@@ -121,12 +127,9 @@ export function BookForm({ onSuccess }: { onSuccess?: () => void }) {
         name="book-name"
         label="book name"
         value={bookName}
-        onChange={setBookName}
-        onBlur={() => {
-          const isValid = !!bookName && bookName.trim().length > 2;
-          if (!isValid) {
-            setBookNameError("name should be at least 2 nonspace characters long");
-          } else {
+        onChange={(val) => {
+          setBookName(val);
+          if (val && val.trim().length >= 2) {
             setBookNameError("");
           }
         }}
@@ -141,12 +144,9 @@ export function BookForm({ onSuccess }: { onSuccess?: () => void }) {
           boxClassName="w-full"
           name="member-email"
           value={invitedUserEmail}
-          onChange={setInvitedUserEmail}
-          onBlur={() => {
-            const isValid = validateEmail(invitedUserEmail);
-            if (!isValid) {
-              setEmailError("invalid email");
-            } else {
+          onChange={(val) => {
+            setInvitedUserEmail(val);
+            if (validateEmail(val)) {
               setEmailError("");
             }
           }}

@@ -5,6 +5,12 @@ import { formatErrorRespnse, formatSuccessRespnse } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
+    const supabase = await getServerAuth();
+    const user = await supabase.auth.getSession();
+    if (!user.data.session?.user) {
+        return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
+    }
+
     try {
         const { searchParams } = new URL(req.url);
         const loanBookId = searchParams.get("loanBookId");
@@ -12,10 +18,26 @@ export async function GET(req: NextRequest) {
         const invitedUserEmail = searchParams.get("invitedUserEmail");
         const status = searchParams.get("status") as "pending" | "cancelled" | "accepted" | null;
 
+        const dbUser = await accountServices.getEmailProfile(user.data.session.user.email || "");
+        if (!dbUser) {
+            return NextResponse.json(formatErrorRespnse(404, "user profile not found"), { status: 404 });
+        }
+
+        // Standard user can only query invitations they sent or received, unless admin
+        const isAdmin = user.data.session.user.role === "admin";
+        let targetEmail = invitedUserEmail || undefined;
+        let targetInviterId = invitedByUserId ? Number(invitedByUserId) : undefined;
+
+        if (!isAdmin) {
+            if (!targetEmail && !targetInviterId) {
+                targetEmail = dbUser.email;
+            }
+        }
+
         const invitations = await invitationServices.getMany({
             loanBookId: loanBookId ? Number(loanBookId) : undefined,
-            invitedByUserId: invitedByUserId ? Number(invitedByUserId) : undefined,
-            invitedUserEmail: invitedUserEmail || undefined,
+            invitedByUserId: targetInviterId,
+            invitedUserEmail: targetEmail,
             status: status || undefined,
         });
 
@@ -32,16 +54,16 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+    const supabase = await getServerAuth();
+    const user = await supabase.auth.getSession();
+    if (!user.data.session?.user) {
+        return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
+    }
+
     try {
         const body = await req.json();
-        const supabase = await getServerAuth();
-        const res = await supabase.auth.getUser();
 
-        if (res.error || !res.data.user) {
-            return NextResponse.json(formatErrorRespnse(401, "unauthorized: please login first"), { status: 401 });
-        }
-
-        const dbUser = await accountServices.getEmailProfile(res.data.user.email || "");
+        const dbUser = await accountServices.getEmailProfile(user.data.session.user.email || "");
         if (!dbUser) {
             return NextResponse.json(formatErrorRespnse(404, "user profile not found"), { status: 404 });
         }

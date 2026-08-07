@@ -4,6 +4,7 @@ import { accountsClient } from "@/lib/client/api/accounts";
 import { booksClient } from "@/lib/client/api/books";
 import { Account } from "@/lib/server/db/schema";
 import { LazyText } from "./lazy-text";
+import { truncate } from "@/lib/utils/strings";
 
 interface SignitureProps {
     userId: number;
@@ -39,8 +40,8 @@ export function BookOwnerSigniture({ bookId, showOwnIndicator, account }: BookOw
     }
 
     if (showOwnIndicator && account && owner.email === account.email) {
-        return <span title={owner?.email} className="font-mono">your book</span>;
+        return <span title={owner?.email} className="font-mono">yours</span>;
     } else {
-        return <span title={owner?.email} className="font-mono">{owner.name}'s book</span>;
+        return <span title={owner?.email} className="font-mono">{truncate(owner.name || "", 10)}'s</span>;
     }
 }

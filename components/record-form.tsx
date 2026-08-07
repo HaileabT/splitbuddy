@@ -22,24 +22,14 @@ export function RecordForm({ onSuccess, book }: RecordFormProps) {
   const createTxMutation = transactionsClient.useCreateTransaction();
   const isCreateLoading = createTxMutation.isPending;
 
-  const onAmountBlur = () => {
-    if (!amount || amount.trim().length < 1) {
-      setAmountError("amount is required to create a transaction");
-      return;
-    }
-    if (isNaN(Number(amount.trim().replaceAll(",", "")))) {
-      setAmountError("amount must be a number");
-      return;
-    }
-  }
-
   const onSubmit = async () => {
+    setAmountError("");
+    setRequestError("");
+
     if (!amount || amount.trim().length < 1 || isNaN(Number(amount.replaceAll(",", "")))) {
       setAmountError("invalid amount");
       return;
     }
-
-    setRequestError("");
 
     try {
       await createTxMutation.mutateAsync({ amount: amount.trim().replaceAll(",", ""), loanBookId: book.id, type: "parent", note: reason });
@@ -74,7 +64,6 @@ export function RecordForm({ onSuccess, book }: RecordFormProps) {
           }}
           decimalPoints={2}
           error={amountError}
-          onBlur={onAmountBlur}
         />
       </div>
       <AppTextarea label="Reason" placeholder="Drinks" value={reason} onChange={setReason} />

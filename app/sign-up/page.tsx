@@ -36,74 +36,77 @@ export default function SignUp() {
   const searchParams = useSearchParams();
   const redirect_to = searchParams.get("redirect_to");
 
-  console.log(redirect_to)
   const [isLoading, setIsLoading] = useState(false);
 
   const createAccountMutation = accountsClient.useCreateAccount();
 
   const togglePasswordInputType = () => {
     setPassHiden((prev) => !prev);
-  }
+  };
 
   const onSubmit = async () => {
     setRequestError("");
-    setNextRequest("")
-    if (!validateEmail(email)) {
-      setEmailInputError("Invalid email");
-      return;
-    }
+    setNextRequest("");
+    setEmailInputError("");
+    setNameInputError("");
+    setPasswordInputError("");
+    setConfirmPasswordInputError("");
+
+    let hasError = false;
+
     if (name.trim().length < 2) {
       setNameInputError("Name must be at least 2 characters long");
-      return;
+      hasError = true;
+    }
+    if (!validateEmail(email)) {
+      setEmailInputError("Invalid email");
+      hasError = true;
     }
     if (password.length < 8) {
       setPasswordInputError("Password must be at least 8 characters long");
-      return;
+      hasError = true;
     }
     if (password !== confirmPassword) {
-      setConfirmPasswordInputError("Passwords do not match");
-      return;
+      setConfirmPasswordInputError("Confirm password must be the same as password");
+      hasError = true;
     }
+
+    if (hasError) return;
+
     setIsLoading(true);
     const { error, data } = await supabase.auth.signUp({
       email: email,
       password: password,
 
       options: {
-
         data: {
           name: name,
         },
         emailRedirectTo: decodeURIComponent(redirect_to || ""),
-
       },
-
     });
 
-
-    console.log(data)
     if (error) {
-      console.log(error.message)
+      console.log(error.message);
       setRequestError(error.message);
-    }
-    else {
+    } else {
       try {
-        await createAccountMutation.mutateAsync({ name: data.user?.user_metadata.name || "", email: data.user?.email || "", id: data.user?.id || "" })
+        await createAccountMutation.mutateAsync({ name: data.user?.user_metadata.name || "", email: data.user?.email || "", id: data.user?.id || "" });
       } catch (error) {
         if (error instanceof Error) {
-          setRequestError(error?.message || String(error))
-
+          setRequestError(error?.message || String(error));
         } else {
-          setRequestError(String(error))
+          setRequestError(String(error));
         }
       }
 
       await reloadUser();
-      setNextRequest("Email verification link has been sent through email. Please check spam if you don't find it.")
+      setNextRequest("Email verification link has been sent through email. Please check spam if you don't find it.");
     }
 
-    setIsLoading(false)
+    setIsLoading(false);
   };
+
   return (
     <AuthFormPage
       title="Register"
@@ -123,17 +126,11 @@ export default function SignUp() {
           name="name"
           label="name"
           placeholder="Abebe Kebede"
+          value={name}
           onChange={(text) => {
-            const isValid = text.trim() && text.trim().length >= 2;
-            if (isValid) {
+            setName(text);
+            if (text.trim().length >= 2) {
               setNameInputError("");
-              setName(text)
-            }
-          }}
-          onBlur={(text) => {
-            const isValid = !text.trim() || text.trim().length < 2;
-            if (isValid) {
-              setNameInputError("Name must be at least 2 characters long");
             }
           }}
           error={nameInputError}
@@ -143,16 +140,11 @@ export default function SignUp() {
           name="email"
           label="email"
           placeholder="abebe@gmail.com"
+          value={email}
           onChange={(text) => {
-            const isValid = validateEmail(text);
-            if (isValid) {
+            setEmail(text);
+            if (validateEmail(text)) {
               setEmailInputError("");
-              setEmail(text)
-            }
-          }}
-          onBlur={() => {
-            if (!validateEmail(email)) {
-              setEmailInputError("Invalid email");
             }
           }}
           error={emailInputError}
@@ -165,17 +157,11 @@ export default function SignUp() {
           showHiddenToggle
           onShowHiddenToggleClick={togglePasswordInputType}
           placeholder="••••••••"
+          value={password}
           onChange={(text) => {
-            const isValid = text.trim() && text.trim().length >= 8;
-            if (isValid) {
+            setPassword(text);
+            if (text.trim().length >= 8) {
               setPasswordInputError("");
-            }
-            setPassword(text)
-          }}
-          onBlur={(text) => {
-            const isValid = !text.trim() || text.trim().length < 8;
-            if (isValid) {
-              setPasswordInputError("Password must be at least 8 characters long");
             }
           }}
           error={passwordInputError}
@@ -192,22 +178,15 @@ export default function SignUp() {
           name="confirm-password"
           label="confirm password"
           placeholder="••••••••"
+          value={confirmPassword}
           onChange={(text) => {
-            const isValid = text.trim() && text.trim().length >= 8;
-            if (isValid) {
+            setConfirmPassword(text);
+            if (text === password) {
               setConfirmPasswordInputError("");
-              setConfirmPassword(text)
-            }
-          }}
-          onBlur={(text) => {
-            const isValid = !text.trim() || text.trim().length < 8;
-            if (isValid) {
-              setConfirmPasswordInputError("Confirm password must be the same as password");
             }
           }}
           error={confirmPasswordInputError}
         />
-        {/*<AppInput type="password" name="password" placeholder="password" />*/}
       </div>
       <AppButton variant="primary" isLoading={isLoading}>
         Sign Up

@@ -62,6 +62,10 @@ export const passwordCriteria = {
   number: "Password must contain at least one number",
 }
 
+export const truncate = (text: string, size: number = 20) => {
+  return text.substring(0, size) + (text.length > size ? "..." : "")
+}
+
 export function validatePassword(password: string): { pass: (keyof typeof passwordCriteria)[]; fail: (keyof typeof passwordCriteria)[] } {
   const hasLower = /[a-z]+/;
   const hasUpper = /[A-Z]+/;

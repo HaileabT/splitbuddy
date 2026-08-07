@@ -5,6 +5,12 @@ import { formatErrorRespnse, formatSuccessRespnse } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const supabase = await getServerAuth();
+    const user = await supabase.auth.getSession();
+    if (!user.data.session?.user) {
+        return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
+    }
+
     try {
         const { id } = await params;
         const numericId = Number(id);
@@ -15,7 +21,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             });
         }
 
-        const sumOverall = await bookServices.getSumOfAmountsForUser(account.id);
+        let sumOverall: number | undefined = undefined;
+        if (user.data.session.user.email?.toLowerCase() === account.email?.toLowerCase()) {
+            sumOverall = await bookServices.getSumOfAmountsForUser(account.id);
+        }
+
         return NextResponse.json(formatSuccessRespnse(200, "profile found", 1, { ...account, amount: sumOverall }), {
             status: 200
         });
@@ -31,9 +41,25 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const supabase = await getServerAuth();
+    const user = await supabase.auth.getSession();
+    if (!user.data.session?.user) {
+        return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
+    }
+
     try {
         const { id } = await params;
         const numericId = Number(id);
+        const targetAccount = await accountServices.getById(numericId);
+
+        if (!targetAccount) {
+            return NextResponse.json(formatErrorRespnse(404, "profile not found"), { status: 404 });
+        }
+
+        if (user.data.session.user.email?.toLowerCase() !== targetAccount.email?.toLowerCase() && user.data.session.user.role !== "admin") {
+            return NextResponse.json(formatErrorRespnse(403, "forbidden"), { status: 403 });
+        }
+
         const body = await req.json();
         const account = await accountServices.update(numericId, body.name);
         return NextResponse.json(formatSuccessRespnse(200, "profile updated", 1, account), {
@@ -51,18 +77,27 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const supabase = await getServerAuth();
+    const user = await supabase.auth.getSession();
+    if (!user.data.session?.user) {
+        return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
+    }
+
     try {
         const { id } = await params;
         const numericId = Number(id);
-        const supabase = await getServerAuth();
-        const user = await supabase.auth.getUser();
-        if (!user.data.user?.id) {
-            return NextResponse.json(formatErrorRespnse(403, "forbidden"), {
-                status: 403
-            });
+        const targetAccount = await accountServices.getById(numericId);
+
+        if (!targetAccount) {
+            return NextResponse.json(formatErrorRespnse(404, "profile not found"), { status: 404 });
         }
+
+        if (user.data.session.user.email?.toLowerCase() !== targetAccount.email?.toLowerCase() && user.data.session.user.role !== "admin") {
+            return NextResponse.json(formatErrorRespnse(403, "forbidden"), { status: 403 });
+        }
+
         const account = await accountServices.remove(numericId);
-        await supabase.auth.admin.deleteUser(user.data.user.id);
+        await supabase.auth.admin.deleteUser(user.data.session.user.id);
 
         return NextResponse.json(formatSuccessRespnse(200, "account deleted", 1, account), {
             status: 200

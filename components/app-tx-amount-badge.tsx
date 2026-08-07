@@ -17,18 +17,18 @@ export function AppTxAmountBadge({ amount, role, className = "" }: AppTxAmountBa
     if (isOwner) {
         if (isPositive) {
             badgeText = "member owes";
-            colorClass = "bg-success/2 text-success";
+            colorClass = "bg-success/8 text-success";
         } else {
             badgeText = "you owe";
-            colorClass = "bg-destructive/2 text-destructive";
+            colorClass = "bg-destructive/8 text-destructive";
         }
     } else {
         if (isPositive) {
             badgeText = "you owe";
-            colorClass = "bg-destructive/2 text-destructive";
+            colorClass = "bg-destructive/8 text-destructive";
         } else {
             badgeText = "you paid";
-            colorClass = "bg-success/2 text-success";
+            colorClass = "bg-success/8 text-success";
         }
     }
 

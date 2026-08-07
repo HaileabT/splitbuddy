@@ -1,13 +1,30 @@
 import { ApiError } from "@/lib/server/error";
 import { accountServices, bookServices } from "@/lib/server/services";
+import { membersRepo } from "@/lib/server/db/repos";
 import { getServerAuth } from "@/lib/server/supabase/auth";
 import { formatErrorRespnse, formatSuccessRespnse } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const supabase = await getServerAuth();
+    const user = await supabase.auth.getSession();
+    if (!user.data.session?.user) {
+        return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
+    }
+
     try {
         const { id } = await params;
         const numericId = Number(id);
+
+        const dbUser = await accountServices.getEmailProfile(user.data.session.user.email || "");
+        if (!dbUser) {
+            return NextResponse.json(formatErrorRespnse(404, "user profile not found"), { status: 404 });
+        }
+
+        const membership = await membersRepo.getMember(numericId, dbUser.id);
+        if (!membership && user.data.session.user.role !== "admin") {
+            return NextResponse.json(formatErrorRespnse(403, "forbidden: you are not a member of this book"), { status: 403 });
+        }
 
         const members = await bookServices.getMembers(numericId);
         return NextResponse.json(formatSuccessRespnse(200, "members list", members.length, members), { status: 200 });
@@ -23,10 +40,26 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const supabase = await getServerAuth();
+    const user = await supabase.auth.getSession();
+    if (!user.data.session?.user) {
+        return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
+    }
+
     try {
         const { id } = await params;
         const numericId = Number(id);
         const body = await req.json();
+
+        const dbUser = await accountServices.getEmailProfile(user.data.session.user.email || "");
+        if (!dbUser) {
+            return NextResponse.json(formatErrorRespnse(404, "user profile not found"), { status: 404 });
+        }
+
+        const reqMembership = await membersRepo.getMember(numericId, dbUser.id);
+        if (!reqMembership && user.data.session.user.role !== "admin") {
+            return NextResponse.json(formatErrorRespnse(403, "forbidden: only members can manage book members"), { status: 403 });
+        }
 
         const member = await bookServices.addMember(numericId, body.userId, body.role);
         return NextResponse.json(formatSuccessRespnse(201, "member added", 1, member), { status: 201 });
@@ -42,6 +75,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const supabase = await getServerAuth();
+    const user = await supabase.auth.getSession();
+    if (!user.data.session?.user) {
+        return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
+    }
+
     try {
         const { id } = await params;
         const numericId = Number(id);
@@ -52,13 +91,11 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
             return NextResponse.json(formatErrorRespnse(400, "targetUserId query param required"), { status: 400 });
         }
 
-        const supabase = await getServerAuth();
-        const res = await supabase.auth.getUser();
-        if (res.error || !res.data.user) {
-            return NextResponse.json(formatErrorRespnse(401, "unauthorized: please login first"), { status: 401 });
+        const dbUser = await accountServices.getEmailProfile(user.data.session.user.email || "");
+        if (!dbUser) {
+            return NextResponse.json(formatErrorRespnse(404, "user profile not found"), { status: 404 });
         }
 
-        const dbUser = await accountServices.getEmailProfile(res.data.user.email || "");
         const removed = await bookServices.removeMember(numericId, Number(targetUserIdStr), dbUser.id);
         return NextResponse.json(formatSuccessRespnse(200, "member removed", 1, removed), { status: 200 });
     } catch (error) {

@@ -96,11 +96,6 @@ export function UpdatePasswordForm({ onSuccess }: UpdatePasswordFormProps) {
             setCurrentPasswordError("");
           }
         }}
-        onBlur={(text) => {
-          if (!text) {
-            setCurrentPasswordError("Current password is required");
-          }
-        }}
         error={currentPasswordError}
       />
 
@@ -117,11 +112,6 @@ export function UpdatePasswordForm({ onSuccess }: UpdatePasswordFormProps) {
           }
         }}
         onFocus={() => setShowPasswordCriteria(true)}
-        onBlur={(text) => {
-          if (!text || text.length < 8) {
-            setPasswordError("Password must be at least 8 characters long");
-          }
-        }}
         error={passwordError}
       />
 
@@ -141,11 +131,6 @@ export function UpdatePasswordForm({ onSuccess }: UpdatePasswordFormProps) {
           setConfirmPassword(text);
           if (text === password) {
             setConfirmPasswordError("");
-          }
-        }}
-        onBlur={(text) => {
-          if (text !== password) {
-            setConfirmPasswordError("Passwords do not match");
           }
         }}
         error={confirmPasswordError}
