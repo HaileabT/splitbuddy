@@ -43,13 +43,13 @@ export function TransactionDialog({ open, onOpenChange, book, transaction }: Tra
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
                 showCloseButton={false}
-                className="z-100 max-w-xl gap-4 rounded-4xl border border-border/10 bg-card p-6 sm:max-w-xl"
+                className="z-100 max-w-xl w-[calc(100%-1.5rem)] max-h-[85dvh] flex flex-col gap-4 rounded-3xl sm:rounded-4xl border border-border/10 bg-card p-4 sm:p-6"
             >
-                <DialogHeader className="border-b border-border/10 pb-4 flex flex-row justify-between items-center w-full">
+                <DialogHeader className="border-b border-border/10 pb-4 flex flex-row justify-between items-center w-full shrink-0">
                     <div>
                         <DialogTitle asChild>
-                            <div className="flex items-center gap-2">
-                                <h3 className="text-2xl font-extrabold text-foreground">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <h3 className="text-xl sm:text-2xl font-extrabold text-foreground">
                                     {absAmt} Birr
                                 </h3>
                                 <AppTxAmountBadge amount={transaction.amount} role={book.membership.role} />
@@ -71,7 +71,7 @@ export function TransactionDialog({ open, onOpenChange, book, transaction }: Tra
                         </div>
                     )}
                 </DialogHeader>
-                <div className="w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-4">
+                <div className="w-full flex-1 max-h-[55dvh] overflow-y-auto rounded-xl border border-border/10 bg-muted p-3 sm:p-4">
                     <div className="flex flex-col gap-2">
                         <p className="flex justify-between border-b border-dashed border-border/30 text-foreground/50">
                             <span>Reason</span>

@@ -32,10 +32,10 @@ export function NewBookButton() {
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="overflow-hidden bg-card border-0! outline-0! shadow-none! shadow-transparent border-transparent! w-[calc(100%-1rem)]! max-w-125!"
+        className="z-100 max-w-xl w-[calc(100%-1.5rem)] max-h-[85dvh] flex flex-col gap-4 rounded-3xl sm:rounded-4xl bg-card border border-border/20 p-4 sm:p-6 overflow-hidden"
         showCloseButton={false}
       >
-        <DialogHeader className="bg-card rounded-md">
+        <DialogHeader className="bg-card rounded-md shrink-0">
           <DialogTitle className="text-foreground text-lg font-bold">
             Invite Member
           </DialogTitle>
@@ -43,7 +43,7 @@ export function NewBookButton() {
             Other member email
           </DialogDescription>
         </DialogHeader>
-        <div className="bg-card rounded-md">
+        <div className="bg-card flex-1 max-h-[60dvh] overflow-y-auto rounded-md">
           <BookForm />
         </div>
       </DialogContent>

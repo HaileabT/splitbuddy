@@ -242,7 +242,7 @@ export default function AppSpecialNumberInput({
           onBlur={onInputBlur}
           value={currentDisplay}
           className={cn(
-            "bg-transparent!  w-full! pr-12 text-7xl! h-max font-bold text-primary border-none placeholder:text-foreground/5 inset-shadow-card inset-x-25!",
+            "bg-transparent! w-full! pr-12 text-4xl! sm:text-6xl! md:text-7xl! h-max font-bold text-primary border-none placeholder:text-foreground/5 inset-shadow-card inset-x-25!",
             className,
           )}
         />

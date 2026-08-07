@@ -43,9 +43,9 @@ export function DeleteTxDialog({ open, onOpenChange, book, transaction, onSucces
     return <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
             showCloseButton={false}
-            className="z-100 max-w-xl gap-4 rounded-4xl border border-border bg-card p-0 sm:max-w-xl overflow-hidden"
+            className="z-100 max-w-xl w-[calc(100%-1.5rem)] max-h-[85dvh] flex flex-col rounded-3xl sm:rounded-4xl border border-border bg-card p-0 overflow-hidden"
         >
-            <DialogHeader className="border-b border-border/10 p-6 pb-4 bg-destructive text-white">
+            <DialogHeader className="border-b border-border/10 p-4 sm:p-6 pb-4 bg-destructive text-white shrink-0">
                 <DialogTitle className="text-lg font-bold">
                     Are you sure?
                 </DialogTitle>
@@ -53,9 +53,9 @@ export function DeleteTxDialog({ open, onOpenChange, book, transaction, onSucces
                     This action is irreversible and you cannot undo.
                 </DialogDescription>
             </DialogHeader>
-            <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 p-6 pt-2 flex flex-col gap-4">
+            <div className="flex-1 max-h-[55dvh] w-full overflow-y-auto p-4 sm:p-6 pt-3 flex flex-col gap-4">
                 {requestError && <p className="text-destructive text-sm font-mono">{requestError}</p>}
-                <strong className="text-lg font-light">
+                <strong className="text-base sm:text-lg font-light leading-relaxed">
                     This action will remove this transaction from loan book name{" "}
                     <span className="font-bold">{book.name}</span> with{" "}
                     <span className="font-bold">
@@ -64,9 +64,9 @@ export function DeleteTxDialog({ open, onOpenChange, book, transaction, onSucces
                     <span className="font-bold">{transaction.amount} Birr</span>. Are you sure?
                 </strong>
 
-                <div className="flex gap-4">
-                    <AppButton className="cursor-pointer" disabled={isLoading} onClick={() => onOpenChange?.(false)}>Nah, Let's Keep it</AppButton>
-                    <AppButton className="bg-muted! hover:bg-destructive! disabled:bg-destructive group" isLoading={isLoading} disabled={isLoading} onClick={onDelete}>
+                <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-2">
+                    <AppButton className="cursor-pointer w-full sm:w-auto" disabled={isLoading} onClick={() => onOpenChange?.(false)}>Nah, Let's Keep it</AppButton>
+                    <AppButton className="bg-muted! hover:bg-destructive! disabled:bg-destructive group w-full sm:w-auto" isLoading={isLoading} disabled={isLoading} onClick={onDelete}>
                         <span className="text-destructive group-hover:text-muted">
                             Remove
                         </span>

@@ -67,9 +67,9 @@ export default function Home() {
       <Dialog open={invitationModalOpen} onOpenChange={setInvitationModalOpen}>
         <DialogContent
           showCloseButton={false}
-          className="z-100 max-w-xl rounded-4xl border border-border bg-card p-6 sm:max-w-xl"
+          className="z-100 max-w-xl w-[calc(100%-1.5rem)] max-h-[85dvh] flex flex-col gap-4 rounded-3xl sm:rounded-4xl border border-border bg-card p-4 sm:p-6"
         >
-          <DialogHeader className="border-b border-border/10">
+          <DialogHeader className="border-b border-border/10 pb-2 shrink-0">
             <DialogTitle className="text-lg font-bold">
               You have an invitaiton
             </DialogTitle>
@@ -77,12 +77,12 @@ export default function Home() {
               Please choose to accept or decline it
             </DialogDescription>
           </DialogHeader>
-          <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 py-2">
+          <div className="max-h-[55dvh] flex-1 w-full overflow-y-auto rounded-xl border border-border/10 py-2">
             <InvitationPrompt invKey={invitedBookKey} onDecided={onInvitationActionDecided} />
           </div>
         </DialogContent>
 
-        <DialogOverlay className="backdrop-blur-2xl" />
+        <DialogOverlay className="backdrop-blur-sm" />
       </Dialog>
 
       <LoanBookDialog book={openBook} open={loanBookOpen} onOpenChange={setLoanBookOpen} />

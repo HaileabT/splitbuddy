@@ -13,15 +13,15 @@ export function UpdateBookDialog({ open, onOpenChange, book }: UpdateBookDialogP
     return <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
             showCloseButton={false}
-            className="z-100 max-w-xl gap-4 rounded-4xl border border-border bg-card sm:max-w-xl overflow-hidden p-6"
+            className="z-100 max-w-xl w-[calc(100%-1.5rem)] max-h-[85dvh] flex flex-col gap-4 rounded-3xl sm:rounded-4xl border border-border bg-card overflow-hidden p-4 sm:p-6"
         >
-            <DialogHeader className="border-b border-border/10 pb-4">
+            <DialogHeader className="border-b border-border/10 pb-4 shrink-0">
                 <DialogTitle className="text-lg font-bold">Rename Book</DialogTitle>
                 <DialogDescription className="sr-only">
                     Give it a new name
                 </DialogDescription>
             </DialogHeader>
-            <div className="w-full rounded-xl border border-border/10 flex flex-col gap-4">
+            <div className="w-full flex-1 overflow-y-auto rounded-xl border border-border/10 flex flex-col gap-4">
                 <UpdateBookForm book={book} onSuccess={() => onOpenChange?.(false)} />
             </div>
         </DialogContent>

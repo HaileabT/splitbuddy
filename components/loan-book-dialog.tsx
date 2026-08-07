@@ -65,12 +65,12 @@ export function LoanBookDialog({ open, onOpenChange, book, onUpdate }: LoanBookD
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
                 showCloseButton={false}
-                className="max-w-xl gap-4 rounded-4xl border border-border/10 bg-card p-6 sm:max-w-xl"
+                className="max-w-xl w-[calc(100%-1.5rem)] max-h-[85dvh] flex flex-col gap-4 rounded-3xl sm:rounded-4xl border border-border/10 bg-card p-4 sm:p-6"
             >
-                <DialogHeader className="flex-row items-start justify-between border-b border-border/10 pb-4">
+                <DialogHeader className="flex-row items-start justify-between border-b border-border/10 pb-4 shrink-0">
                     <div>
                         <DialogTitle className="text-sm font-light">
-                            {<LazyText className="text-xl! font-bold!" isLoading={isBookLoading} text={bookReloaded?.name} fallback={""} failed={isBookFailed} />} {"with "}
+                            {<LazyText className="text-lg sm:text-xl font-bold!" isLoading={isBookLoading} text={bookReloaded?.name} fallback={""} failed={isBookFailed} />} {"with "}
                             {(members && members.length > 0) && <LazyText isLoading={isMembersLoading} text={members[1]?.user.name} fallback={""} failed={isMembersFailed} />}
                         </DialogTitle>
                         <DialogDescription>
@@ -80,7 +80,7 @@ export function LoanBookDialog({ open, onOpenChange, book, onUpdate }: LoanBookD
                             </span>
                         </DialogDescription>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1.5 sm:gap-2">
                         <Button
                             size="icon"
                             className="cursor-pointer bg-transparent hover:bg-primary/10 text-primary"
@@ -104,7 +104,7 @@ export function LoanBookDialog({ open, onOpenChange, book, onUpdate }: LoanBookD
                         </Button>}
                     </div>
                 </DialogHeader>
-                <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-4">
+                <div className="flex-1 max-h-[55dvh] min-h-0 w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-3 sm:p-4">
                     <h2 className="mb-1">Recent Records</h2>
                     <div className="flex flex-col gap-4">
                         {(transactions && transactions.length > 0) && transactions.map(t => {

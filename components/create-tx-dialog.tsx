@@ -12,17 +12,17 @@ export function CreateTxDialog({ open, onOpenChange, book }: CreateTxDialogProps
     return <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
             showCloseButton={false}
-            className="z-100 max-w-xl gap-4 rounded-4xl border border-border bg-card p-6 sm:max-w-xl"
+            className="z-100 max-w-xl w-[calc(100%-1.5rem)] max-h-[85dvh] flex flex-col gap-4 rounded-3xl sm:rounded-4xl border border-border bg-card p-4 sm:p-6"
         >
-            <DialogHeader className="border-b border-border/10 pb-4">
+            <DialogHeader className="border-b border-border/10 pb-4 shrink-0">
                 <DialogTitle className="text-lg font-bold">
                     Create A Record
                 </DialogTitle>
-                <DialogDescription className="">
+                <DialogDescription className="text-xs sm:text-sm">
                     Think of this as you are writing on someone else's loan book. If you enter 200 that means you owe the owner 200 more.
                 </DialogDescription>
             </DialogHeader>
-            <div className="max-h-192 w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-4">
+            <div className="flex-1 max-h-[55dvh] w-full overflow-y-auto rounded-xl border border-border/10 bg-muted p-3 sm:p-4">
                 <RecordForm onSuccess={() => onOpenChange(false)} book={book} />
             </div>
         </DialogContent>

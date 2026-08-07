@@ -45,7 +45,7 @@ export default function Settings() {
       <Dialog open={isNameModalOpen} onOpenChange={setIsNameModalOpen}>
         <DialogContent
           showCloseButton={true}
-          className="z-100 max-w-xl gap-4 rounded-4xl border border-border bg-card p-6 sm:max-w-xl"
+          className="z-100 max-w-xl w-[calc(100%-1.5rem)] max-h-[85dvh] flex flex-col gap-4 rounded-3xl sm:rounded-4xl border border-border bg-card p-4 sm:p-6 overflow-hidden"
         >
           <DialogHeader className="border-b border-border/10 pb-4">
             <DialogTitle className="text-lg font-bold">Update Name</DialogTitle>
@@ -60,7 +60,7 @@ export default function Settings() {
       <Dialog open={isPasswordModalOpen} onOpenChange={setIsPasswordModalOpen}>
         <DialogContent
           showCloseButton={true}
-          className="z-100 max-w-xl gap-4 rounded-4xl border border-border bg-card p-6 sm:max-w-xl"
+          className="z-100 max-w-xl w-[calc(100%-1.5rem)] max-h-[85dvh] flex flex-col gap-4 rounded-3xl sm:rounded-4xl border border-border bg-card p-4 sm:p-6 overflow-hidden"
         >
           <DialogHeader className="border-b border-border/10 pb-4">
             <DialogTitle className="text-lg font-bold">Update Password</DialogTitle>
