@@ -7,6 +7,10 @@ interface AppTxAmountBadgeProps {
 }
 
 export function AppTxAmountBadge({ amount, role, className = "" }: AppTxAmountBadgeProps) {
+    if (typeof amount === "string"
+    ) {
+        amount.replaceAll(",", "")
+    }
     const amtNum = Number(amount || "0");
     const isOwner = role === "owner";
     const isPositive = amtNum >= 0;
