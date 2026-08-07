@@ -71,7 +71,7 @@ export function LoanBookDialog({ open, onOpenChange, book, onUpdate }: LoanBookD
                     <div>
                         <DialogTitle className="text-sm font-light">
                             {<LazyText className="text-xl! font-bold!" isLoading={isBookLoading} text={bookReloaded?.name} fallback={""} failed={isBookFailed} />} {"with "}
-                            {(members && members.length > 0) && <LazyText isLoading={isMembersLoading} text={members[0].user.name} fallback={""} failed={isMembersFailed} />}
+                            {(members && members.length > 0) && <LazyText isLoading={isMembersLoading} text={members[1]?.user.name} fallback={""} failed={isMembersFailed} />}
                         </DialogTitle>
                         <DialogDescription>
                             {isBookPositive ? "Member owes you " : "You owe members "}
