@@ -22,13 +22,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         }
 
         const membership = await membersRepo.getMember(numericId, dbUser.id);
-        if (!membership && user.data.session.user.role !== "admin") {
-            return NextResponse.json(formatErrorRespnse(403, "forbidden: you are not a member of this book"), { status: 403 });
-        }
-
+        
         const book = await bookServices.get(numericId);
         if (!book) {
             return NextResponse.json(formatErrorRespnse(404, "book not found"), { status: 404 });
+        }
+        if (!membership && user.data.session.user.role !== "admin") {
+            book.amount  = null
         }
         return NextResponse.json(formatSuccessRespnse(200, "book found", 1, book), { status: 200 });
     } catch (error) {
