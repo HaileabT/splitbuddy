@@ -15,7 +15,7 @@ export async function sendInvitationEmail(from: string, to: string, link: string
 
     await resend.emails.send({
         to,
-        from: "noreply@haileabtesfaye.dev",
+        from: "splitbuddy <no-reply@haileabtesfaye.dev>",
         html: invitationEmailTemp,
         subject: "You have been invited to a loan book on splitbuddy",
     })
