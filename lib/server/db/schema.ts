@@ -18,6 +18,7 @@ export const loanBooks = pgTable(
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 128 }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    amount: decimal("amount").default("0.00")
   },
   (table) => [index("loan_books_created_at_idx").on(table.createdAt), index("loan_books_name_idx").on(table.name)],
 );
@@ -159,7 +160,7 @@ export const accounts = pgTable("accounts", {
   id: serial("id").primaryKey(),
   name: text("name"),
   email: text("email").unique().notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow()
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 })
 
 export const accountRelations = relations(accounts, ({ many }) => ({

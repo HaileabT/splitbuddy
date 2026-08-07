@@ -1,0 +1,1 @@
+ALTER TABLE "loan_books" ADD COLUMN "amount" numeric DEFAULT '0.00';

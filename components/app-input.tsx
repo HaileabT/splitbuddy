@@ -69,7 +69,7 @@ export default function AppInput({
         </Button>}
       </div>
       {error && (
-        <p className="text-destructive text-sm self-end font-mono text-xs">{error}</p>
+        <p className="text-destructive self-end font-mono text-xs">{error}</p>
       )}
     </div>
   );

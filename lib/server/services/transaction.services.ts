@@ -14,11 +14,23 @@ async function create(data: TransactionCreate) {
   }
 
   const amountNum = parseFloat(data.amount);
-  if (isNaN(amountNum) || amountNum <= 0) {
-    throw new ApiError("Transaction amount must be greater than 0", 400);
+  if (isNaN(amountNum) || amountNum === 0) {
+    throw new ApiError("Transaction amount cannot be zero", 400);
   }
 
-  return await transactionsRepo.create(data);
+  const dataToCreate = {
+    ...data,
+    amount: amountNum.toFixed(2),
+  };
+
+  const createdTx = await transactionsRepo.create(dataToCreate);
+
+  // Directly update cumulative book amount with raw transaction amount
+  const currentBookAmount = Number(book.amount || "0.00");
+  const newBookAmount = (currentBookAmount + amountNum).toFixed(2);
+  await booksRepo.update(book.id, { amount: newBookAmount });
+
+  return createdTx;
 }
 
 async function get(id: number) {
@@ -61,14 +73,30 @@ async function update(
     throw new ApiError("You do not have permission to edit this transaction", 403);
   }
 
+  const updatedDetails = { ...details };
+
   if (details.amount !== undefined) {
-    const amountNum = parseFloat(details.amount);
-    if (isNaN(amountNum) || amountNum <= 0) {
-      throw new ApiError("Transaction amount must be greater than 0", 400);
+    const newAmountNum = parseFloat(details.amount);
+    if (isNaN(newAmountNum) || newAmountNum === 0) {
+      throw new ApiError("Transaction amount cannot be zero", 400);
+    }
+
+    const oldTxAmountNum = Number(tx.amount || "0.00");
+    const diff = newAmountNum - oldTxAmountNum;
+
+    updatedDetails.amount = newAmountNum.toFixed(2);
+
+    if (diff !== 0) {
+      const book = await booksRepo.get(tx.loanBookId);
+      if (book) {
+        const currentBookAmount = Number(book.amount || "0.00");
+        const newBookAmount = (currentBookAmount + diff).toFixed(2);
+        await booksRepo.update(book.id, { amount: newBookAmount });
+      }
     }
   }
 
-  return await transactionsRepo.update(id, details);
+  return await transactionsRepo.update(id, updatedDetails);
 }
 
 async function remove(id: number, requestingUserId: number) {
@@ -82,7 +110,17 @@ async function remove(id: number, requestingUserId: number) {
     throw new ApiError("You do not have permission to delete this transaction", 403);
   }
 
-  return await transactionsRepo.remove(id);
+  const removed = await transactionsRepo.remove(id);
+
+  const book = await booksRepo.get(tx.loanBookId);
+  if (book) {
+    const txAmountNum = Number(tx.amount || "0.00");
+    const currentBookAmount = Number(book.amount || "0.00");
+    const newBookAmount = (currentBookAmount - txAmountNum).toFixed(2);
+    await booksRepo.update(book.id, { amount: newBookAmount });
+  }
+
+  return removed;
 }
 
 export const transactionServices = {

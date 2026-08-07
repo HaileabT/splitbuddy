@@ -48,6 +48,21 @@ async function checkDuplicateBook(
   }
 }
 
+async function getSumOfAmountsForUser(userId: number) {
+  const books = await getUserBooks(userId);
+  let amount = 0;
+
+  for (const book of books) {
+    if (book.membership.role === "owner") {
+      amount += Number(book.amount || "0.00");
+    } else {
+      amount -= Number(book.amount || "0.00");
+    }
+  }
+
+  return amount;
+}
+
 async function create(name: string, userId: number) {
   if (!name.trim()) {
     throw new ApiError("Book name is required", 400);
@@ -185,6 +200,25 @@ async function removeMember(
   return await membersRepo.removeByBookAndUser(bookId, targetUserId);
 }
 
+async function getBookOwner(id: number) {
+  const book = await booksRepo.get(id);
+  if (!book) {
+    throw new ApiError("Book not found", 404);
+  }
+
+  const members = await membersRepo.getMany({ bookId: id });
+  if (members && members.length > 0) {
+    const owner = members.find((m) => m.role === "owner");
+    if (!owner) {
+      throw new ApiError("Book owner not found", 404);
+    }
+    const account = await accountsRepo.get(owner.userId);
+    return account;
+  } else {
+    throw new ApiError("Book has no members", 404);
+  }
+}
+
 export const bookServices = {
   create,
   checkDuplicateBook,
@@ -195,4 +229,6 @@ export const bookServices = {
   remove,
   addMember,
   removeMember,
+  getSumOfAmountsForUser,
+  getBookOwner
 };

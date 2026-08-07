@@ -22,8 +22,9 @@ interface SpecialNumberInputProps {
   min?: number;
   max?: number;
   decimalPoints?: number;
-  label?: string;
+  label?: React.ReactNode;
   step?: number;
+  error?: string
   onChange?: (val: string) => void;
   value?: string;
   defaultValue?: string;
@@ -54,6 +55,7 @@ export default function AppSpecialNumberInput({
   decimalPoints,
   label,
   step,
+  error,
   min,
   max,
   onChange,
@@ -267,6 +269,9 @@ export default function AppSpecialNumberInput({
           </Button>
         </div>
       </div>
+      {error && (
+        <p className="text-destructive self-end font-mono text-xs">{error}</p>
+      )}
     </div>
   );
 }

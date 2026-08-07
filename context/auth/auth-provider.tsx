@@ -18,7 +18,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const supabase = getAuth();
 
-  const { data: account, refetch: refetchAccount } = accountsClient.useAccountByEmail(user?.email || "")
+  const { data: account, refetch: refetchAccount } = accountsClient.useAccountByEmail(user?.email || "doesntexist", true)
 
   useEffect(() => {
     reloadAccount();

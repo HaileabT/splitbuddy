@@ -15,6 +15,13 @@
       "when": 1785933863855,
       "tag": "0001_wide_kat_farrell",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786085045903,
+      "tag": "0002_familiar_giant_girl",
+      "breakpoints": true
     }
   ]
 }

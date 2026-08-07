@@ -1,13 +1,24 @@
 import { accountServices } from "@/lib/server/services";
 import { getServerAuth } from "@/lib/server/supabase/auth";
 import { formatErrorRespnse, formatSuccessRespnse } from "@/lib/utils";
-import { ApiError } from "next/dist/server/api-utils";
+import { ApiError } from "@/lib/server/error";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    return NextResponse.json(formatErrorRespnse(503, "coming soon"), {
-        status: 503
-    })
+export async function GET(req: NextRequest) {
+    try {
+        const profiles = await accountServices.getProfiles();
+        return NextResponse.json(formatSuccessRespnse(200, "profiles list", profiles.length, profiles), {
+            status: 200
+        });
+    } catch (error) {
+        let errMsg = "something went wrong";
+        let status = 500;
+        if (error instanceof ApiError) {
+            errMsg = error.message;
+            status = error.code;
+        }
+        return NextResponse.json(formatErrorRespnse(status, errMsg), { status });
+    }
 }
 
 export async function POST(req: NextRequest) {
@@ -22,7 +33,7 @@ export async function POST(req: NextRequest) {
         let status = 500
         if (error instanceof ApiError) {
             errMsg = error.message
-            status = error.statusCode
+            status = error.code;
         }
 
         const id = body.id;

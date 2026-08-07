@@ -8,5 +8,5 @@ export const AuthContext = createContext<{
     isLoading: boolean;
     reloadUser: () => Promise<void>;
     reloadAccount: () => Promise<void>;
-    account: Account | null;
+    account: Account & { amount?: number } | null;
 } | null>(null);

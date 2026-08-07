@@ -1,21 +1,25 @@
 import { ApiError } from "@/lib/server/error";
-import { accountServices, bookServices, transactionServices } from "@/lib/server/services";
+import { accountServices, transactionServices } from "@/lib/server/services";
 import { getServerAuth } from "@/lib/server/supabase/auth";
 import { formatErrorRespnse, formatSuccessRespnse } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest) {
     try {
-        const { id } = await params;
-        const numericId = Number(id);
+        const { searchParams } = new URL(req.url);
+        const loanBookId = searchParams.get("loanBookId");
+        const authorId = searchParams.get("authorId");
+        const type = searchParams.get("type");
+        const parentId = searchParams.get("parentId");
 
-        const book = await bookServices.get(numericId);
-        if (!book) {
-            return NextResponse.json(formatErrorRespnse(404, "book doesn't exist"), { status: 404 });
-        }
+        const transactions = await transactionServices.getMany({
+            loanBookId: loanBookId ? Number(loanBookId) : undefined,
+            authorId: authorId ? Number(authorId) : undefined,
+            type: type || undefined,
+            parentId: parentId ? Number(parentId) : undefined,
+        });
 
-        const transactions = await transactionServices.getByBook(numericId);
-        return NextResponse.json(formatSuccessRespnse(200, "transactions found", transactions?.length || 0, transactions || []));
+        return NextResponse.json(formatSuccessRespnse(200, "transactions list", transactions.length, transactions), { status: 200 });
     } catch (error) {
         let errMsg = "failed to get transactions";
         let status = 500;
@@ -27,22 +31,23 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 }
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(req: NextRequest) {
     try {
-        const { id } = await params;
-        const numericId = Number(id);
         const body = await req.json();
-
         const supabase = await getServerAuth();
         const res = await supabase.auth.getUser();
+
         if (res.error || !res.data.user) {
             return NextResponse.json(formatErrorRespnse(401, "unauthorized: please login first"), { status: 401 });
         }
 
         const dbUser = await accountServices.getEmailProfile(res.data.user.email || "");
+        if (!dbUser) {
+            return NextResponse.json(formatErrorRespnse(404, "user profile not found"), { status: 404 });
+        }
+
         const transaction = await transactionServices.create({
             ...body,
-            loanBookId: numericId,
             authorId: dbUser.id,
         });
 

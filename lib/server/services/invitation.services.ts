@@ -50,13 +50,16 @@ async function create(
 
   await sendInvitationEmail(invitor.data.user.user_metadata.name, email, invitationLink, book.name || undefined)
 
-  return await invitationsRepo.create({
+  const invitation = await invitationsRepo.create({
     loanBookId,
     invitedByUserId,
     invitedUserEmail: email,
     key,
+    
     status: "pending",
   });
+
+  return {...invitation, link: invitationLink}
 }
 
 async function get(id: number) {

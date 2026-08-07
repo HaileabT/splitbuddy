@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
             })
         }
 
-        return NextResponse.json(formatSuccessRespnse(201, "book created successfully", 1, book), { status: 201 })
+        return NextResponse.json(formatSuccessRespnse(201, "book created successfully", 1, {...book, link: invitaiton.link}), { status: 201 })
     } catch (error) {
         let errMsg = "something went wrong";
         let status = 500;
