@@ -31,13 +31,24 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     const supabase = await getServerAuth();
-    const user = await supabase.auth.getSession();
-    if (!user.data.session?.user) {
-        return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
-    }
+    const sessionRes = await supabase.auth.getSession();
     const body = await req.json();
-    if (user.data.session.user.email?.toLowerCase() !== body.email?.toLowerCase() && user.data.session.user.role !== "admin") {
-        return NextResponse.json(formatErrorRespnse(403, "forbidden"), { status: 403 });
+
+    const currentUser = sessionRes.data.session?.user;
+
+    if (!currentUser) {
+        // Unauthenticated session (e.g. during new user signup before session cookie is established)
+        if (!body.id || !body.email) {
+            return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
+        }
+        const authUser = await supabase.auth.admin.getUserById(body.id);
+        if (!authUser.data?.user || authUser.data.user.email?.toLowerCase() !== body.email.toLowerCase()) {
+            return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
+        }
+    } else {
+        if (currentUser.email?.toLowerCase() !== body.email?.toLowerCase() && currentUser.role !== "admin") {
+            return NextResponse.json(formatErrorRespnse(403, "forbidden"), { status: 403 });
+        }
     }
 
     try {
@@ -54,7 +65,9 @@ export async function POST(req: NextRequest) {
         }
 
         const id = body.id;
-        await supabase.auth.admin.deleteUser(id);
+        if (id) {
+            await supabase.auth.admin.deleteUser(id);
+        }
 
         return NextResponse.json(formatErrorRespnse(status, errMsg), {
             status

@@ -1,10 +1,27 @@
 import { validateEmail } from "@/lib/utils/strings";
 import { accountsRepo } from "../db/repos";
 import { ApiError } from "../error";
+import { getServerAuth } from "../supabase/auth";
 
 async function getEmailProfile(email: string) {
-  const user = await accountsRepo.getByEmail(email);
+  const normalizedEmail = email.toLowerCase().trim();
+  const user = await accountsRepo.getByEmail(normalizedEmail);
   if (!user) {
+    try {
+      const supabase = await getServerAuth();
+      const authRes = await supabase.auth.admin.listUsers();
+      const authUser = authRes.data?.users?.find(
+        (u) => u.email?.toLowerCase() === normalizedEmail
+      );
+      if (authUser) {
+        const name = authUser.user_metadata?.name || authUser.email?.split("@")[0] || "User";
+        const existing = await accountsRepo.getByEmail(normalizedEmail);
+        if (existing) return existing;
+        return await accountsRepo.create({ name, email: normalizedEmail });
+      }
+    } catch (err) {
+      console.error("Failed to auto-create missing account profile:", err);
+    }
     throw new ApiError("profile doesn't exist", 404);
   }
   return user;
@@ -19,7 +36,7 @@ async function getById(id: number) {
 }
 
 async function register(name: string, email: string) {
-  email = email.toLowerCase();
+  email = email.toLowerCase().trim();
   const isValidEmail = validateEmail(email);
 
   if (!isValidEmail) {
@@ -27,7 +44,7 @@ async function register(name: string, email: string) {
   }
   const existingUser = await accountsRepo.getByEmail(email);
   if (existingUser) {
-    throw new ApiError("profile with this email already exists", 409);
+    return existingUser;
   }
 
   return await accountsRepo.create({ name, email });

@@ -7,9 +7,9 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const supabase = await getServerAuth();
     const user = await supabase.auth.getSession();
-    if (!user.data.session?.user) {
-        return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
-    }
+    // if (!user.data.session?.user) {
+    //     return NextResponse.json(formatErrorRespnse(401, "unauthorized"), { status: 401 });
+    // }
 
     try {
         const { id } = await params;
@@ -21,12 +21,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             });
         }
 
-        let sumOverall: number | undefined = undefined;
-        if (user.data.session.user.email?.toLowerCase() === account.email?.toLowerCase()) {
+        let sumOverall: number = 0;
+        if (user.data.session?.user.email?.toLowerCase() === account.email?.toLowerCase()) {
             sumOverall = await bookServices.getSumOfAmountsForUser(account.id);
         }
 
-        return NextResponse.json(formatSuccessRespnse(200, "profile found", 1, { ...account, amount: sumOverall }), {
+        return NextResponse.json(formatSuccessRespnse(200, "profile found", 1, { ...account, amount: sumOverall ?? 0 }), {
             status: 200
         });
     } catch (error) {
