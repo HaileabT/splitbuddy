@@ -71,6 +71,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { PwaInstaller } from "@/components/pwa-installer";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -106,6 +108,7 @@ export default async function RootLayout({
             </Suspense>
           </QueryProvider>
         </ThemeProvider>
+        <PwaInstaller />
       </body>
     </html>
   );
