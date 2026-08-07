@@ -28,6 +28,7 @@ import { useEffect, useState } from "react";
 import LandingPage from "./landing/page";
 import { Loader2 } from "lucide-react";
 import { LazyText } from "@/components/lazy-text";
+import { invitationsClient } from "@/lib/client/api/invitations";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -38,6 +39,8 @@ export default function Home() {
   const { user, isAuthenticated, account, reloadAccount } = useAuth();
   const { isLoading, data: books } = booksClient.useBooks({ userId: account?.id || 0 });
   const [openBook, setOpenBook] = useState<UserBooksResponseType | null>(null);
+
+  const { data: invitation, isLoading: isInvitationLoading } = invitationsClient.useInvitationByKey(invitedBookKey);
 
   useEffect(() => {
     let invitedTo = searchParams.get("invited_to") || "";
@@ -52,7 +55,6 @@ export default function Home() {
   const onInvitationActionDecided = () => {
     setInvitationModalOpen(false);
     setInvitedBookKey("");
-    window.location.replace("/");
   };
 
   if (!isAuthenticated) {
@@ -65,7 +67,7 @@ export default function Home() {
         <AppNav />
       </header>
 
-      <Dialog open={invitationModalOpen} onOpenChange={setInvitationModalOpen}>
+      {(invitation && invitation.status === "pending") && <Dialog open={invitationModalOpen} onOpenChange={setInvitationModalOpen}>
         <DialogContent
           showCloseButton={false}
           className="z-100 max-w-xl w-[calc(100%-1.5rem)] max-h-[85dvh] flex flex-col gap-4 rounded-3xl sm:rounded-4xl border border-border bg-card p-4 sm:p-6"
@@ -79,12 +81,12 @@ export default function Home() {
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-[55dvh] flex-1 w-full overflow-y-auto rounded-xl border border-border/10 py-2">
-            <InvitationPrompt invKey={invitedBookKey} onDecided={onInvitationActionDecided} />
+            <InvitationPrompt invitation={invitation} onDecided={onInvitationActionDecided} />
           </div>
         </DialogContent>
 
         <DialogOverlay className="backdrop-blur-sm" />
-      </Dialog>
+      </Dialog>}
 
       <LoanBookDialog book={openBook} open={loanBookOpen} onOpenChange={setLoanBookOpen} />
 

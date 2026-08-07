@@ -6,18 +6,18 @@ import { invitationsClient } from "@/lib/client/api/invitations"
 import { useEffect } from "react"
 import AppButton from "./app-button"
 import { LazyText } from "./lazy-text"
+import { Invitation } from "@/lib/server/db/schema"
 
 interface InvitationPromptProps {
-    invKey: string,
+    invitation: Invitation,
     onDecided?: () => void;
 }
 
-export function InvitationPrompt({ invKey, onDecided }: InvitationPromptProps) {
-    const { data: invitation, isLoading: isInvitationLoading } = invitationsClient.useInvitationByKey(invKey);
+export function InvitationPrompt({ invitation, onDecided }: InvitationPromptProps) {
     const { data: book, refetch: refreshBook, isLoading: isBookLoading } = booksClient.useBook(invitation?.loanBookId || 0)
     const { data: invitor, refetch: refreshInvitor, isLoading: isInvitorLoading } = accountsClient.useAccount(invitation?.invitedByUserId || 0)
-    const acceptInvitationMutation = invitationsClient.useAcceptInvitation(invKey);
-    const cancelInvitationMutation = invitationsClient.useCancelInvitation(invKey);
+    const acceptInvitationMutation = invitationsClient.useAcceptInvitation(invitation.key);
+    const cancelInvitationMutation = invitationsClient.useCancelInvitation(invitation.key);
     const isCancelLoading = cancelInvitationMutation.isPending;
     const isAcceptLoading = acceptInvitationMutation.isPending;
 
@@ -35,10 +35,6 @@ export function InvitationPrompt({ invKey, onDecided }: InvitationPromptProps) {
 
     useEffect(() => {
         if (invitation) {
-            if (invitation.status !== "pending") {
-                onDecided?.();
-                return;
-            }
             refreshBook()
             refreshInvitor();
         }
