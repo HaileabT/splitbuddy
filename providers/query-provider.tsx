@@ -14,6 +14,7 @@ function getQueryClient() {
         queries: {
           gcTime: 30_000,
           retry: 3,
+          refetchOnMount: false,
           refetchOnReconnect: true,
         },
       },
